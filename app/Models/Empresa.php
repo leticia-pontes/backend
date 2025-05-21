@@ -10,7 +10,7 @@ class Empresa extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    protected $table = 'Empresa';
+    protected $table = 'empresas';
     protected $primaryKey = 'id';
     public $timestamps = false;
 
@@ -40,7 +40,7 @@ class Empresa extends Authenticatable
 
     // === RELACIONAMENTOS ===
 
-    public function perfil()
+    public function perfis()
     {
         return $this->hasOne(Perfil::class, 'id');
     }

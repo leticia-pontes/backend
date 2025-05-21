@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PedidoStatus extends Model
 {
-    protected $table = 'Pedido_Status';
-    protected $primaryKey = 'id_pedido_status';
+    protected $table = 'pedido_status';
+    protected $primaryKey = 'id';
     public $timestamps = false;
 
     protected $fillable = [

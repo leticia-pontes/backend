@@ -10,12 +10,12 @@ use App\Http\Controllers\Api\CatalogoController;
 use App\Http\Controllers\Api\AvaliacaoController;
 
 Route::apiResources([
-    'empresa' => EmpresaController::class,
+    'empresas' => EmpresaController::class,
+    'perfis' => PerfilController::class,
     // 'plano' => PlanoController::class,
-    // 'perfil' => PerfilController::class,
+    // 'catalogo' => CatalogoController::class,
     // 'pedido' => PedidoController::class,
     // 'status-pedido' => PedidoStatusController::class,
     // 'pagamento' => PagamentoController::class,
-    // 'catalogo' => CatalogoController::class,
     // 'avaliacao' => AvaliacaoController::class,
 ]);

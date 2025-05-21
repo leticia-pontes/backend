@@ -5,17 +5,19 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 
 class EmpresaController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/empresa",
+     *     path="/api/empresas",
      *     summary="Lista todas as empresas",
      *     tags={"Empresa"},
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de empresas",
+     *         description="Lista de Empresas",
      *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Empresa"))
      *     )
      * )
@@ -28,7 +30,7 @@ class EmpresaController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/empresa",
+     *     path="/api/empresas",
      *     summary="Cria uma nova empresa",
      *     tags={"Empresa"},
      *     @OA\RequestBody(
@@ -54,12 +56,18 @@ class EmpresaController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info('Dados recebidos:', $request->all());
+
+        $exists = \DB::table('empresas')->where('cnpj', $request->cnpj)->exists();
+
+        Log::info('Existe empresa com esse CNPJ? ' . ($exists ? 'Sim' : 'Não'));
+
         $validatedData = $request->validate([
             'nome' => 'required|string|max:255',
-            'cnpj' => 'required|string|max:20|unique:Empresa,cnpj',
+            'cnpj' => 'required|string|max:20|unique:empresas,cnpj',
             'perfil' => 'nullable|string',
             'seguidores' => 'nullable|integer',
-            'email' => 'required|email|unique:Empresa,email',
+            'email' => 'required|email|unique:empresas,email',
             'senha' => 'required|string|min:6',
             'telefone' => 'nullable|string|max:20',
             'endereco' => 'nullable|string|max:255',
@@ -72,7 +80,7 @@ class EmpresaController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/empresa/{id}",
+     *     path="/api/empresas/{id}",
      *     summary="Mostra uma empresa pelo id",
      *     tags={"Empresa"},
      *     @OA\Parameter(
@@ -93,7 +101,7 @@ class EmpresaController extends Controller
      *     )
      * )
      */
-    public function show($id)
+    public function show(string $id)
     {
         $empresa = Empresa::findOrFail($id);
         return response()->json($empresa);
@@ -101,7 +109,7 @@ class EmpresaController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/empresa/{id}",
+     *     path="/api/empresas/{id}",
      *     summary="Atualiza uma empresa",
      *     tags={"Empresa"},
      *     @OA\Parameter(
@@ -130,20 +138,24 @@ class EmpresaController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $empresa = Empresa::findOrFail($id);
 
         $validatedData = $request->validate([
             'nome' => 'sometimes|required|string|max:255',
-            'cnpj' => 'sometimes|required|string|max:20|unique:Empresa,cnpj,' . $id . ',id',
+            'cnpj' => 'sometimes|required|string|max:20|unique:empresas,cnpj,' . $id . ',id',
             'perfil' => 'nullable|string',
             'seguidores' => 'nullable|integer',
-            'email' => 'sometimes|required|email|unique:Empresa,email,' . $id . ',id',
+            'email' => 'sometimes|required|email|unique:empresas,email,' . $id . ',id',
             'senha' => 'sometimes|required|string|min:6',
             'telefone' => 'nullable|string|max:20',
             'endereco' => 'nullable|string|max:255',
         ]);
+
+        if (isset($validatedData['senha'])) {
+            $validatedData['senha'] = bcrypt($validatedData['senha']);
+        }
 
         $empresa->update($validatedData);
 
@@ -152,7 +164,7 @@ class EmpresaController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/empresa/{id}",
+     *     path="/api/empresas/{id}",
      *     summary="Deleta uma empresa",
      *     tags={"Empresa"},
      *     @OA\Parameter(
@@ -172,7 +184,7 @@ class EmpresaController extends Controller
      *     )
      * )
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $empresa = Empresa::findOrFail($id);
         $empresa->delete();

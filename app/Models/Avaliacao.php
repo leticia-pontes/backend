@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Avaliacao extends Model
 {
-    protected $table = 'Avaliacao';
-    protected $primaryKey = 'id_avaliacao';
+    protected $table = 'avaliacoes';
+    protected $primaryKey = 'id';
     public $timestamps = false;
 
     protected $fillable = [
-        'nota', 'comentario', 'data_avaliacao', 'id'
+        'nota', 'comentario', 'data_avaliacao', 'id_empresa'
     ];
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id');
+        return $this->belongsTo(Empresa::class, 'id_empresa');
     }
 }

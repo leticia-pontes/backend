@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pagamento extends Model
 {
-    protected $table = 'Pagamento';
-    protected $primaryKey = 'id_pagamento';
+    protected $table = 'pagamentos';
+    protected $primaryKey = 'id';
     public $timestamps = false;
 
     protected $fillable = [

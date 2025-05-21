@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Swagger;
+namespace App\Swagger\Info;
 
 use OpenApi\Annotations as OA;
 

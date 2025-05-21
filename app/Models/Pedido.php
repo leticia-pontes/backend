@@ -6,17 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
-    protected $table = 'Pedido';
-    protected $primaryKey = 'id_pedido';
+    protected $table = 'pedidos';
+    protected $primaryKey = 'id';
     public $timestamps = false;
 
     protected $fillable = [
-        'data_pedido', 'id'
+        'data_pedido', 'id_empresa'
     ];
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id');
+        return $this->belongsTo(Empresa::class, 'id_empresa');
     }
 
     public function status()

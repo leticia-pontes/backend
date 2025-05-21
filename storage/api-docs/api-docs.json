@@ -6,16 +6,16 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/empresa": {
+        "/api/empresas": {
             "get": {
                 "tags": [
                     "Empresa"
                 ],
                 "summary": "Lista todas as empresas",
-                "operationId": "16ed6746c1189579744f37b68f943cf0",
+                "operationId": "9239adbd1cfe29bdf0372db2124d0b1f",
                 "responses": {
                     "200": {
-                        "description": "Lista de empresas",
+                        "description": "Lista de Empresas",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -34,7 +34,7 @@
                     "Empresa"
                 ],
                 "summary": "Cria uma nova empresa",
-                "operationId": "cb7b051a230f4cd567951f0b05ab1bb9",
+                "operationId": "bea7e1cd70745d9a85563a4cdba64902",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -94,13 +94,13 @@
                 }
             }
         },
-        "/api/empresa/{id}": {
+        "/api/empresas/{id}": {
             "get": {
                 "tags": [
                     "Empresa"
                 ],
                 "summary": "Mostra uma empresa pelo id",
-                "operationId": "0aae62a86426eb3f6c666da4bdae026c",
+                "operationId": "7e0d938df2a2305cd42451cc84ec72ec",
                 "parameters": [
                     {
                         "name": "id",
@@ -133,7 +133,7 @@
                     "Empresa"
                 ],
                 "summary": "Atualiza uma empresa",
-                "operationId": "5efb82a74a0398d20204102e2752899b",
+                "operationId": "61d6235f805bd62afcf89b24a6bae3aa",
                 "parameters": [
                     {
                         "name": "id",
@@ -179,7 +179,7 @@
                     "Empresa"
                 ],
                 "summary": "Deleta uma empresa",
-                "operationId": "50f15bcaf5304326f11bd8e99c36b57c",
+                "operationId": "ba97e99dc7744b02f562b861b32e29a6",
                 "parameters": [
                     {
                         "name": "id",
@@ -200,6 +200,199 @@
                     }
                 }
             }
+        },
+        "/api/perfis": {
+            "get": {
+                "tags": [
+                    "Perfil"
+                ],
+                "summary": "Lista todos os perfis",
+                "operationId": "a0d9ca73487df83b715d1e6b6921d2d5",
+                "responses": {
+                    "200": {
+                        "description": "Lista de Perfis",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Perfil"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Perfil"
+                ],
+                "summary": "Cria um novo perfil",
+                "operationId": "e53844e4601981d939ccb8e8fd3e9423",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "id_empresa"
+                                ],
+                                "properties": {
+                                    "foto": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "biografia": {
+                                        "type": "string"
+                                    },
+                                    "nicho_mercado": {
+                                        "type": "string"
+                                    },
+                                    "tecnologia": {
+                                        "type": "string"
+                                    },
+                                    "redes_sociais": {
+                                        "type": "string"
+                                    },
+                                    "id_empresa": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Perfil criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Perfil"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/perfis/{id}": {
+            "get": {
+                "tags": [
+                    "Perfil"
+                ],
+                "summary": "Exibe um perfil específico",
+                "operationId": "81791b101f7254f870b57c193180eafe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados do perfil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Perfil"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Perfil"
+                ],
+                "summary": "Atualiza um perfil existente",
+                "operationId": "d80b022d565639abcd7368a28f24f80a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do perfil",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "biografia": {
+                                        "type": "string"
+                                    },
+                                    "nicho_mercado": {
+                                        "type": "string"
+                                    },
+                                    "tecnologia": {
+                                        "type": "string"
+                                    },
+                                    "redes_sociais": {
+                                        "type": "string"
+                                    },
+                                    "id_empresa": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perfil atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Perfil"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Perfil não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Perfil"
+                ],
+                "summary": "Remove um perfil",
+                "operationId": "ece61c4ab475880a9f277d1439adeb10",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Perfil removido com sucesso"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -210,8 +403,7 @@
                     "id",
                     "nome",
                     "cnpj",
-                    "email",
-                    "senha"
+                    "email"
                 ],
                 "properties": {
                     "id": {
@@ -237,10 +429,6 @@
                     "email": {
                         "type": "string",
                         "example": "contato@empresa.com"
-                    },
-                    "senha": {
-                        "type": "string",
-                        "example": "senha123"
                     },
                     "telefone": {
                         "type": "string",
@@ -332,6 +520,50 @@
                     }
                 },
                 "type": "object"
+            },
+            "Perfil": {
+                "title": "Perfil",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "foto": {
+                        "type": "string",
+                        "example": "base64stringouurl.jpg"
+                    },
+                    "biografia": {
+                        "type": "string",
+                        "example": "Desenvolvedor de software apaixonado."
+                    },
+                    "nicho_mercado": {
+                        "type": "string",
+                        "example": "Educação"
+                    },
+                    "tecnologia": {
+                        "type": "string",
+                        "example": "Laravel"
+                    },
+                    "redes_sociais": {
+                        "type": "string",
+                        "example": "{'linkedin': '/meuLinkedin'}"
+                    },
+                    "id_empresa": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "PerfilCreate": {
+                "required": [
+                    "id_empresa"
+                ],
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Perfil"
+                    }
+                ]
             }
         }
     },
@@ -339,6 +571,10 @@
         {
             "name": "Empresa",
             "description": "Empresa"
+        },
+        {
+            "name": "Perfil",
+            "description": "Perfil"
         }
     ]
 }
