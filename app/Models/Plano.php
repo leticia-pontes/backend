@@ -11,11 +11,11 @@ class Plano extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nome_plano', 'valor', 'descricao', 'data_criacao', 'id_empresa'
+        'nome_plano', 'valor', 'descricao', 'data_criacao', 'id'
     ];
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id');
     }
 }

@@ -11,12 +11,12 @@ class Pedido extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'data_pedido', 'id_empresa'
+        'data_pedido', 'id'
     ];
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id');
     }
 
     public function status()

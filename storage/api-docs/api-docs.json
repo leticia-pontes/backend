@@ -1,0 +1,344 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API backend",
+        "description": "Documentação da API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/empresa": {
+            "get": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Lista todas as empresas",
+                "operationId": "16ed6746c1189579744f37b68f943cf0",
+                "responses": {
+                    "200": {
+                        "description": "Lista de empresas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Empresa"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Cria uma nova empresa",
+                "operationId": "cb7b051a230f4cd567951f0b05ab1bb9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome",
+                                    "cnpj",
+                                    "email",
+                                    "senha"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Empresa Exemplo"
+                                    },
+                                    "cnpj": {
+                                        "type": "string",
+                                        "example": "12.345.678/0001-99"
+                                    },
+                                    "perfil": {
+                                        "type": "string",
+                                        "example": "perfil_exemplo"
+                                    },
+                                    "seguidores": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "email@exemplo.com"
+                                    },
+                                    "senha": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    },
+                                    "telefone": {
+                                        "type": "string",
+                                        "example": "(11) 99999-9999"
+                                    },
+                                    "endereco": {
+                                        "type": "string",
+                                        "example": "Rua Exemplo, 123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empresa criada com sucesso"
+                    }
+                }
+            }
+        },
+        "/api/empresa/{id}": {
+            "get": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Mostra uma empresa pelo id",
+                "operationId": "0aae62a86426eb3f6c666da4bdae026c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes da empresa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empresa"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Atualiza uma empresa",
+                "operationId": "5efb82a74a0398d20204102e2752899b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmpresaUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empresa atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empresa"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa não encontrada"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Deleta uma empresa",
+                "operationId": "50f15bcaf5304326f11bd8e99c36b57c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da empresa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Empresa deletada com sucesso"
+                    },
+                    "404": {
+                        "description": "Empresa não encontrada"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Empresa": {
+                "title": "Empresa",
+                "required": [
+                    "id",
+                    "nome",
+                    "cnpj",
+                    "email",
+                    "senha"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nome": {
+                        "type": "string",
+                        "example": "Empresa Exemplo"
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "example": "12.345.678/0001-99"
+                    },
+                    "perfil": {
+                        "type": "string",
+                        "example": "Perfil X"
+                    },
+                    "seguidores": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "contato@empresa.com"
+                    },
+                    "senha": {
+                        "type": "string",
+                        "example": "senha123"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "example": "(11) 99999-9999"
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "example": "Rua Exemplo, 123"
+                    }
+                },
+                "type": "object"
+            },
+            "EmpresaCreateRequest": {
+                "required": [
+                    "nome",
+                    "cnpj",
+                    "email",
+                    "senha"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "example": "Empresa Exemplo"
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "example": "12.345.678/0001-99"
+                    },
+                    "perfil": {
+                        "type": "string",
+                        "example": "Perfil X"
+                    },
+                    "seguidores": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "contato@empresa.com"
+                    },
+                    "senha": {
+                        "type": "string",
+                        "example": "senha123"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "example": "(11) 99999-9999"
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "example": "Rua Exemplo, 123"
+                    }
+                },
+                "type": "object"
+            },
+            "EmpresaUpdateRequest": {
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "example": "Empresa Exemplo"
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "example": "12.345.678/0001-99"
+                    },
+                    "perfil": {
+                        "type": "string",
+                        "example": "Perfil X"
+                    },
+                    "seguidores": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "contato@empresa.com"
+                    },
+                    "senha": {
+                        "type": "string",
+                        "example": "senha123"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "example": "(11) 99999-9999"
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "example": "Rua Exemplo, 123"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Empresa",
+            "description": "Empresa"
+        }
+    ]
+}

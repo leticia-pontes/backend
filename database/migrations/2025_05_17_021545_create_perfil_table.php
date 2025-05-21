@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('nicho_mercado')->nullable();
             $table->string('tecnologia')->nullable();
             $table->json('redes_sociais')->nullable();
-            $table->unsignedBigInteger('id_empresa'); // FK
+            $table->unsignedBigInteger('id'); // FK
 
             // Relação com empresa
-            $table->foreign('id_empresa')->references('id')->on('empresa')->onDelete('cascade');
+            $table->foreign('id')->references('id')->on('empresa')->onDelete('cascade');
         });
     }
 

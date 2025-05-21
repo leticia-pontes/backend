@@ -14,17 +14,17 @@ return new class extends Migration
             $table->decimal('valor', 10, 2);
             $table->text('descricao')->nullable();
             $table->date('data_criacao');
-            $table->unsignedBigInteger('id_empresa');
+            $table->unsignedBigInteger('id');
 
             // Chave estrangeira correta
-            $table->foreign('id_empresa')->references('id')->on('empresa')->onDelete('cascade');
+            $table->foreign('id')->references('id')->on('empresa')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
         Schema::table('plano', function (Blueprint $table) {
-            $table->dropForeign(['id_empresa']);
+            $table->dropForeign(['id']);
         });
 
         Schema::dropIfExists('plano');

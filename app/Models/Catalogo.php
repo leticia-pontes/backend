@@ -11,11 +11,11 @@ class Catalogo extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'arquivo', 'nome_arquivo', 'descricao', 'data_criacao', 'versao', 'ativo', 'id_empresa'
+        'arquivo', 'nome_arquivo', 'descricao', 'data_criacao', 'versao', 'ativo', 'id'
     ];
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id');
     }
 }

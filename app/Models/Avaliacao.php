@@ -11,11 +11,11 @@ class Avaliacao extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'nota', 'comentario', 'data_avaliacao', 'id_empresa'
+        'nota', 'comentario', 'data_avaliacao', 'id'
     ];
 
     public function empresa()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id');
     }
 }
