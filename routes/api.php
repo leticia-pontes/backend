@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\PedidoStatusController;
 use App\Http\Controllers\Api\PagamentoController;
 use App\Http\Controllers\Api\CatalogoController;
 use App\Http\Controllers\Api\AvaliacaoController;
+use App\Http\Controllers\Api\AuthController;
+use Illuminate\Support\Facades\Route;
 
 Route::apiResources([
     'empresas' => EmpresaController::class,
@@ -19,3 +21,12 @@ Route::apiResources([
     // 'pagamento' => PagamentoController::class,
     // 'avaliacao' => AvaliacaoController::class,
 ]);
+
+// Rota de login sem prefixo (opcional)
+Route::post('login', [AuthController::class, 'login']);
+
+// Rotas autenticadas dentro do prefixo auth
+Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
+    Route::get('me', [AuthController::class, 'me']);
+    Route::post('logout', [AuthController::class, 'logout']);
+});
