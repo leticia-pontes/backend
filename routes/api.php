@@ -22,11 +22,13 @@ Route::apiResources([
     // 'avaliacao' => AvaliacaoController::class,
 ]);
 
-// Rota de login sem prefixo (opcional)
-Route::post('login', [AuthController::class, 'login']);
-
 // Rotas autenticadas dentro do prefixo auth
-Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
-    Route::get('me', [AuthController::class, 'me']);
-    Route::post('logout', [AuthController::class, 'logout']);
+Route::prefix('auth')->group(function () {
+    Route::post('login', [AuthController::class, 'login'])->name('login');
+    Route::post('register', [AuthController::class, 'register'])->name('register');
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('me', [AuthController::class, 'me']);
+        Route::post('logout', [AuthController::class, 'logout']);
+    });
 });
