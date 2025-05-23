@@ -18,7 +18,7 @@
   - `curl`
   - `zip`
 
-> 💡 Verifique as extensões com: `php -m` ou acesse o arquivo php.ini e busque por `extension=<extensao>` (se estiver com um `;` antes de `extension`, é porque está comentado).
+> 💡 Verifique as extensões com: `php -m` ou acesse o arquivo php.ini e busque por `extension=<extensao>` (remover o `;` se estiver antes de `extension`).
 
 ---
 
