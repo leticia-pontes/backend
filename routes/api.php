@@ -15,10 +15,9 @@ use Illuminate\Support\Facades\Route;
 Route::apiResources([
     'empresas' => EmpresaController::class,
     'perfis' => PerfilController::class,
-    // 'catalogo' => CatalogoController::class,
-    // 'status-pedido' => PedidoStatusController::class,
-    // 'pagamento' => PagamentoController::class,
-    // 'avaliacao' => AvaliacaoController::class,
+    'catalogos' => CatalogoController::class,
+    'avaliacoes' => AvaliacaoController::class,
+    'pagamentos' => PagamentoController::class,
 ]);
 
 // Rotas autenticadas dentro do prefixo auth

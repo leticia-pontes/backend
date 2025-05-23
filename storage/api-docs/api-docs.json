@@ -161,6 +161,336 @@
                 }
             }
         },
+        "/api/avaliacoes": {
+            "get": {
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Listar todas as avaliações",
+                "operationId": "811a8522834579e57cb195105e190ee8",
+                "responses": {
+                    "200": {
+                        "description": "Lista de avaliações"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Criar uma nova avaliação",
+                "operationId": "84844c0a0faf29e9cb23d56b53b5fc89",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nota",
+                                    "comentario",
+                                    "data_avaliacao",
+                                    "id_empresa"
+                                ],
+                                "properties": {
+                                    "nota": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "comentario": {
+                                        "type": "string",
+                                        "example": "Muito bom"
+                                    },
+                                    "data_avaliacao": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-05-23"
+                                    },
+                                    "id_empresa": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Avaliação criada"
+                    }
+                }
+            }
+        },
+        "/api/avaliacoes/{id}": {
+            "get": {
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Exibir uma avaliação específica",
+                "operationId": "a21ecf2f0239fb9a9c22585f1910369d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Avaliação encontrada"
+                    },
+                    "404": {
+                        "description": "Avaliação não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Atualizar uma avaliação",
+                "operationId": "b9284a635d4a46b680a2fa245bdcc075",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nota": {
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "comentario": {
+                                        "type": "string",
+                                        "example": "Atualização do comentário"
+                                    },
+                                    "data_avaliacao": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-01"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Avaliação atualizada"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Remover uma avaliação",
+                "operationId": "a501011447ba43b7ceaaf3b9a9be1d60",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Avaliação removida"
+                    }
+                }
+            }
+        },
+        "/api/catalogos": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Listar todos os catálogos",
+                "operationId": "6be93f181b751655105df230ac037ef8",
+                "responses": {
+                    "200": {
+                        "description": "Lista de catálogos"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Criar um novo catálogo",
+                "operationId": "26d350396d7e86077e89a3051c9ac841",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "arquivo",
+                                    "nome_arquivo",
+                                    "descricao",
+                                    "data_criacao",
+                                    "versao",
+                                    "ativo",
+                                    "id_empresa"
+                                ],
+                                "properties": {
+                                    "arquivo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "nome_arquivo": {
+                                        "type": "string",
+                                        "example": "documento.pdf"
+                                    },
+                                    "descricao": {
+                                        "type": "string",
+                                        "example": "Apresentação institucional"
+                                    },
+                                    "data_criacao": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-05-20"
+                                    },
+                                    "versao": {
+                                        "type": "string",
+                                        "example": "v1.0"
+                                    },
+                                    "ativo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "id_empresa": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Catálogo criado"
+                    }
+                }
+            }
+        },
+        "/api/catalogos/{id}": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Exibir um catálogo específico",
+                "operationId": "e9b85c5025015d6425b875eff1b20f91",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Catálogo encontrado"
+                    },
+                    "404": {
+                        "description": "Catálogo não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Atualizar um catálogo",
+                "operationId": "548b5db253cf82f5cbcb889c9d613d23",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nome_arquivo": {
+                                        "type": "string"
+                                    },
+                                    "descricao": {
+                                        "type": "string"
+                                    },
+                                    "data_criacao": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "versao": {
+                                        "type": "string"
+                                    },
+                                    "ativo": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Catálogo atualizado"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Remover um catálogo",
+                "operationId": "f6f3e29c671ae9ff17f347e63aab2aec",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Catálogo removido"
+                    }
+                }
+            }
+        },
         "/api/empresas": {
             "get": {
                 "tags": [
@@ -480,6 +810,232 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/pagamentos": {
+            "get": {
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Listar todos os pagamentos",
+                "operationId": "aad1ee9bbaf6dfb2c9f6a3d552ce54e3",
+                "responses": {
+                    "200": {
+                        "description": "Lista de pagamentos retornada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Pagamento"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Criar um novo pagamento",
+                "operationId": "d5079fdccc372ef356fbbaaf74ea1ec4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "valor",
+                                    "data_pagamento",
+                                    "metodo_pagamento",
+                                    "status",
+                                    "id_pedido"
+                                ],
+                                "properties": {
+                                    "valor": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 100.5
+                                    },
+                                    "data_pagamento": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-05-23"
+                                    },
+                                    "metodo_pagamento": {
+                                        "type": "string",
+                                        "example": "cartão de crédito"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "confirmado"
+                                    },
+                                    "id_pedido": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pagamento criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pagamento"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/api/pagamentos/{id}": {
+            "get": {
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Mostrar detalhes de um pagamento",
+                "operationId": "d0331b56874c68001c09f03e96f59a9e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pagamento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pagamento encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pagamento"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pagamento não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Atualizar um pagamento existente",
+                "operationId": "5b92aa9a30b7d72062091d5e5bfd3bbd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pagamento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "valor": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "data_pagamento": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "metodo_pagamento": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "id_pedido": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pagamento atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pagamento"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pagamento não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Excluir um pagamento",
+                "operationId": "40d7cf9149d1bb33c3f56ceb511124f3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pagamento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pagamento deletado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pagamento deletado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pagamento não encontrado"
+                    }
+                }
             }
         },
         "/api/pedidos": {
@@ -970,6 +1526,45 @@
     },
     "components": {
         "schemas": {
+            "Pagamento": {
+                "title": "Pagamento",
+                "required": [
+                    "valor",
+                    "data_pagamento",
+                    "metodo_pagamento",
+                    "status",
+                    "id_pedido"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "valor": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5
+                    },
+                    "data_pagamento": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-05-23"
+                    },
+                    "metodo_pagamento": {
+                        "type": "string",
+                        "example": "cartao"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pago"
+                    },
+                    "id_pedido": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
             "Pedido": {
                 "title": "Pedido",
                 "required": [
@@ -1237,6 +1832,14 @@
     },
     "tags": [
         {
+            "name": "Avaliações",
+            "description": "Gerencia as avaliações feitas pelas empresas"
+        },
+        {
+            "name": "Catálogos",
+            "description": "Gerencia o catálogo das empresas"
+        },
+        {
             "name": "Autenticação",
             "description": "Autenticação"
         },
@@ -1247,6 +1850,10 @@
         {
             "name": "Gamificação",
             "description": "Gamificação"
+        },
+        {
+            "name": "Pagamentos",
+            "description": "Pagamentos"
         },
         {
             "name": "Pedido",
