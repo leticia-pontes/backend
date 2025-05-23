@@ -17,7 +17,6 @@ Route::apiResources([
     'perfis' => PerfilController::class,
     'catalogos' => CatalogoController::class,
     'avaliacoes' => AvaliacaoController::class,
-    'pagamentos' => PagamentoController::class,
 ]);
 
 // Rotas autenticadas dentro do prefixo auth
@@ -45,3 +44,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/gamificacao/ranking', [GamificacaoController::class, 'ranking']);
     Route::get('/gamificacao/distintivos', [GamificacaoController::class, 'distintivos']);
 });
+
+Route::middleware('auth:sanctum')->apiResource('pagamentos', PagamentoController::class);
