@@ -50,10 +50,10 @@
    php artisan key:generate
    ```
 
-5. **Execute as migrations**
+5. **Execute as migrations e os seeders para popular o banco**
 
    ```bash
-   php artisan migrate
+   php artisan migrate:fresh --seed
    ```
 
 6. **Ajuste permissões (Linux/macOS)**
