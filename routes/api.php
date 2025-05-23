@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::apiResources([
     'empresas' => EmpresaController::class,
     'perfis' => PerfilController::class,
-    // 'plano' => PlanoController::class,
     // 'catalogo' => CatalogoController::class,
-    // 'pedido' => PedidoController::class,
     // 'status-pedido' => PedidoStatusController::class,
     // 'pagamento' => PagamentoController::class,
     // 'avaliacao' => AvaliacaoController::class,
@@ -31,4 +29,13 @@ Route::prefix('auth')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
     });
+});
+
+Route::middleware('auth:sanctum')->prefix('pedidos')->group(function () {
+    Route::post('/', [PedidoController::class, 'store']);
+    Route::get('/', [PedidoController::class, 'index']);
+    Route::get('/{id}', [PedidoController::class, 'show']);
+    Route::put('/{id}', [PedidoController::class, 'update']);
+    Route::post('/{id}/cancelar', [PedidoController::class, 'cancelar']);
+    Route::post('/{id}/concluir', [PedidoController::class, 'concluir']);
 });

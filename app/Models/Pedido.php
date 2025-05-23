@@ -11,7 +11,7 @@ class Pedido extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'data_pedido', 'id_empresa'
+        'data_pedido', 'id_empresa', 'descricao', 'valor', 'prazo', 'desenvolvedor_id',
     ];
 
     public function empresa()
@@ -22,6 +22,11 @@ class Pedido extends Model
     public function status()
     {
         return $this->hasMany(PedidoStatus::class, 'id_pedido');
+    }
+
+    public function statusAtual()
+    {
+        return $this->status()->orderBy('data_status', 'desc')->first();
     }
 
     public function pagamento()
