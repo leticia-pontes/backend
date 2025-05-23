@@ -356,6 +356,424 @@
                 }
             }
         },
+        "/api/gamificacao/status": {
+            "get": {
+                "tags": [
+                    "Gamificação"
+                ],
+                "summary": "Retorna o nível, pontos e progresso da empresa",
+                "operationId": "2cb6b5b2a669cc9181508c33ef3fc1b6",
+                "responses": {
+                    "200": {
+                        "description": "Status de gamificação da empresa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "nivel": {
+                                            "type": "integer",
+                                            "example": 2
+                                        },
+                                        "pontos": {
+                                            "type": "integer",
+                                            "example": 380
+                                        },
+                                        "proximo_nivel": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/gamificacao/ranking": {
+            "get": {
+                "tags": [
+                    "Gamificação"
+                ],
+                "summary": "Retorna o ranking das empresas com mais pontos",
+                "operationId": "a5ab339e7663d01aad1a6fb37c934be3",
+                "responses": {
+                    "200": {
+                        "description": "Ranking de empresas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "nome": {
+                                                "type": "string",
+                                                "example": "Empresa Exemplo"
+                                            },
+                                            "nivel": {
+                                                "type": "integer",
+                                                "example": 3
+                                            },
+                                            "pontos": {
+                                                "type": "integer",
+                                                "example": 600
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/gamificacao/distintivos": {
+            "get": {
+                "tags": [
+                    "Gamificação"
+                ],
+                "summary": "Retorna os distintivos desbloqueados pela empresa",
+                "operationId": "e744702adef35852ad808d159790cf0e",
+                "responses": {
+                    "200": {
+                        "description": "Lista de distintivos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "titulo": {
+                                                "type": "string",
+                                                "example": "Avaliador Top"
+                                            },
+                                            "descricao": {
+                                                "type": "string",
+                                                "example": "5 avaliações positivas"
+                                            },
+                                            "icone": {
+                                                "type": "string",
+                                                "example": "estrela.png"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/pedidos": {
+            "get": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Lista todos os pedidos do usuário autenticado (contratante ou desenvolvedor).",
+                "operationId": "e848822b988b4e4cf96af0f71f29581c",
+                "responses": {
+                    "200": {
+                        "description": "Lista de pedidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "pedidos": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Pedido"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Cria um novo pedido (apenas para contratante).",
+                "operationId": "36884e796fd6f470919017f7ca543cd0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "data_pedido",
+                                    "descricao",
+                                    "valor",
+                                    "prazo"
+                                ],
+                                "properties": {
+                                    "data_pedido": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-05-22"
+                                    },
+                                    "descricao": {
+                                        "type": "string",
+                                        "example": "Desenvolvimento de site"
+                                    },
+                                    "valor": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1500
+                                    },
+                                    "prazo": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-22"
+                                    },
+                                    "desenvolvedor_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pedido criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pedido"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validação falhou"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pedidos/{id}": {
+            "get": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Mostra um pedido específico.",
+                "operationId": "41f9fd012dcc6f1915be1a7372c7d87b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do pedido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pedido"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Atualiza um pedido (contratante e desenvolvedor podem atualizar campos diferentes).",
+                "operationId": "c552afd071c0184bb7ded11c11c3bb41",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "descricao": {
+                                        "type": "string"
+                                    },
+                                    "valor": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "prazo": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "progresso": {
+                                        "type": "string"
+                                    },
+                                    "comentarios": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pedido atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pedido"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Sem permissão para editar esse pedido"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pedidos/{id}/cancelar": {
+            "post": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Cancela um pedido (apenas contratante).",
+                "operationId": "59b339e29af50124ecf4d10100bffd8a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pedido cancelado com sucesso"
+                    },
+                    "400": {
+                        "description": "Pedido já finalizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão para cancelar"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/pedidos/{id}/concluir": {
+            "post": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Conclui um pedido (apenas desenvolvedor).",
+                "operationId": "c911e1474f9e0dee2115f613f9fedd15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pedido concluído com sucesso"
+                    },
+                    "400": {
+                        "description": "Pedido já finalizado"
+                    },
+                    "403": {
+                        "description": "Sem permissão para concluir"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/perfis": {
             "get": {
                 "tags": [
@@ -552,6 +970,101 @@
     },
     "components": {
         "schemas": {
+            "Pedido": {
+                "title": "Pedido",
+                "required": [
+                    "id",
+                    "data_pedido",
+                    "descricao",
+                    "valor",
+                    "prazo",
+                    "id_empresa"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data_pedido": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-05-22"
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "example": "Desenvolvimento de site"
+                    },
+                    "valor": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1500
+                    },
+                    "prazo": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-06-22"
+                    },
+                    "id_empresa": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "desenvolvedor_id": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "status",
+                                "data_status"
+                            ],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "aguardando"
+                                },
+                                "data_status": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2025-05-22T14:55:00Z"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "pagamento": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "id_pedido": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "pago"
+                            },
+                            "valor_pago": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 1500
+                            },
+                            "data_pagamento": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-05-23T10:00:00Z"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "Empresa": {
                 "title": "Empresa",
                 "required": [
@@ -730,6 +1243,14 @@
         {
             "name": "Empresa",
             "description": "Empresa"
+        },
+        {
+            "name": "Gamificação",
+            "description": "Gamificação"
+        },
+        {
+            "name": "Pedido",
+            "description": "Pedido"
         },
         {
             "name": "Perfil",

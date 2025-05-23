@@ -16,6 +16,7 @@ class Empresa extends Authenticatable
 
     protected $fillable = [
         'nome', 'cnpj', 'perfil', 'seguidores', 'email', 'senha', 'telefone', 'endereco',
+        'nivel', 'pontos'
     ];
 
     protected $hidden = [
@@ -61,5 +62,21 @@ class Empresa extends Authenticatable
     public function avaliacoes()
     {
         return $this->hasMany(Avaliacao::class, 'id_empresa', 'id');
+    }
+
+    public function gamificacao()
+    {
+        return $this->hasOne(GamificacaoPonto::class, 'id_empresa');
+    }
+
+    public function logsGamificacao()
+    {
+        return $this->hasMany(GamificacaoLog::class, 'id_empresa');
+    }
+
+    public function distintivos()
+    {
+        return $this->belongsToMany(GamificacaoDistintivo::class, 'empresa_distintivos', 'id_empresa', 'id_distintivo')
+                    ->withPivot('data_conquista');
     }
 }

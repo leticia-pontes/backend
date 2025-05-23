@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PagamentoController;
 use App\Http\Controllers\Api\CatalogoController;
 use App\Http\Controllers\Api\AvaliacaoController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GamificacaoController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResources([
@@ -38,4 +39,10 @@ Route::middleware('auth:sanctum')->prefix('pedidos')->group(function () {
     Route::put('/{id}', [PedidoController::class, 'update']);
     Route::post('/{id}/cancelar', [PedidoController::class, 'cancelar']);
     Route::post('/{id}/concluir', [PedidoController::class, 'concluir']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/gamificacao/status', [GamificacaoController::class, 'status']);
+    Route::get('/gamificacao/ranking', [GamificacaoController::class, 'ranking']);
+    Route::get('/gamificacao/distintivos', [GamificacaoController::class, 'distintivos']);
 });

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gamificacao_pontos', function (Blueprint $table) {
+        Schema::create('gamificacao_log', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_empresa');
             $table->enum('tipo', ['empresa_contratante', 'desenvolvedor']);
-            $table->integer('pontos')->default(0);
-            $table->integer('nivel')->default(1);
+            $table->string('evento');
+            $table->integer('pontos');
             $table->timestamps();
 
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gamificacao_pontos');
+        Schema::dropIfExists('gamificacao_log');
     }
 };

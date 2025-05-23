@@ -3,10 +3,43 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Pedido;
 use App\Models\PedidoStatus;
+use App\Models\ConfiguracaoGamificacao;
+use Illuminate\Http\Request;
 
+/**
+ * @OA\Schema(
+ *     schema="Pedido",
+ *     type="object",
+ *     title="Pedido",
+ *     required={"id", "data_pedido", "descricao", "valor", "prazo", "id_empresa"},
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="data_pedido", type="string", format="date", example="2025-05-22"),
+ *     @OA\Property(property="descricao", type="string", example="Desenvolvimento de site"),
+ *     @OA\Property(property="valor", type="number", format="float", example=1500.00),
+ *     @OA\Property(property="prazo", type="string", format="date", example="2025-06-22"),
+ *     @OA\Property(property="id_empresa", type="integer", example=1),
+ *     @OA\Property(property="desenvolvedor_id", type="integer", nullable=true, example=2),
+ *     @OA\Property(
+ *         property="status",
+ *         type="array",
+ *         @OA\Items(
+ *             type="object",
+ *             required={"status", "data_status"},
+ *             @OA\Property(property="status", type="string", example="aguardando"),
+ *             @OA\Property(property="data_status", type="string", format="date-time", example="2025-05-22T14:55:00Z")
+ *         )
+ *     ),
+ *     @OA\Property(property="pagamento", type="object", nullable=true,
+ *         @OA\Property(property="id", type="integer", example=1),
+ *         @OA\Property(property="id_pedido", type="integer", example=1),
+ *         @OA\Property(property="status", type="string", example="pago"),
+ *         @OA\Property(property="valor_pago", type="number", format="float", example=1500.00),
+ *         @OA\Property(property="data_pagamento", type="string", format="date-time", example="2025-05-23T10:00:00Z")
+ *     )
+ * )
+ */
 class PedidoController extends Controller
 {
     /**
@@ -239,14 +272,8 @@ class PedidoController extends Controller
         $pedido = Pedido::findOrFail($id);
         $empresa = auth()->user();
 
-        if ($empresa->id !== $pedido->desenvolvedor_id) {
-            return response()->json(['message' => 'Sem permissão para concluir.'], 403);
-        }
-
-        $statusAtual = $pedido->statusAtual();
-
-        if (in_array($statusAtual->status, ['cancelado', 'concluido'])) {
-            return response()->json(['message' => 'Pedido já está finalizado.'], 400);
+        if (! $empresa->canConclude($pedido)) {
+            return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
         PedidoStatus::create([
@@ -254,6 +281,19 @@ class PedidoController extends Controller
             'data_status' => now(),
             'id_pedido' => $pedido->id,
         ]);
+
+        $pontos = ConfiguracaoGamificacao::getValor('pontos_pedido_concluido', 30);
+
+        if ($pedido->avaliacao && $pedido->avaliacao->nota >= 4) {
+            $pontos = ConfiguracaoGamificacao::getValor('pontos_pedido_avaliacao_boa', 50);
+        }
+
+        $empresa->pontos += $pontos;
+
+        $pontosParaNivel = ConfiguracaoGamificacao::getValor('pontos_para_subir_nivel', 200);
+        $empresa->nivel = floor($empresa->pontos / $pontosParaNivel) + 1;
+
+        $empresa->save();
 
         return response()->json(['message' => 'Pedido concluído com sucesso.']);
     }
