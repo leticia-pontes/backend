@@ -92,7 +92,7 @@ class AvaliacaoController extends Controller
     {
         $avaliacao = Avaliacao::findOrFail($id);
         $avaliacao->update($request->only(['nota', 'comentario', 'data_avaliacao']));
-        return $avaliacao;
+        return response()->noContent();
     }
 
     /**
