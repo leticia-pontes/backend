@@ -2,35 +2,52 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
+    use HasFactory;
+
     protected $table = 'pedidos';
-    protected $primaryKey = 'id';
-    public $timestamps = false;
+    protected $primaryKey = 'id_pedido';
 
     protected $fillable = [
-        'data_pedido', 'id_empresa', 'descricao', 'valor', 'prazo', 'desenvolvedor_id',
+        'id_empresa_contratante',
+        'id_empresa_desenvolvedora',
+        'titulo',
+        'descricao',
+        'valor_estimado',
+        'data_prazo',
+        'data_pedido',
     ];
 
-    public function empresa()
+    protected $casts = [
+        'data_prazo' => 'date',
+        'data_pedido' => 'date',
+    ];
+
+    // Relacionamento com a Empresa Contratante
+    public function contratante()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id_empresa_contratante', 'id_empresa');
     }
 
-    public function status()
+    // Relacionamento com a Empresa Desenvolvedora (pode ser nula)
+    public function desenvolvedora()
     {
-        return $this->hasMany(PedidoStatus::class, 'id_pedido');
+        return $this->belongsTo(Empresa::class, 'id_empresa_desenvolvedora', 'id_empresa');
     }
 
-    public function statusAtual()
+    // Relacionamento com PedidoStatus (1:N) - Um pedido pode ter vários status ao longo do tempo
+    public function statusHistorico()
     {
-        return $this->status()->orderBy('data_status', 'desc')->first();
+        return $this->hasMany(PedidoStatus::class, 'id_pedido', 'id_pedido');
     }
 
-    public function pagamento()
+    // Você pode adicionar um acessor para obter o status atual mais recente
+    public function getCurrentStatusAttribute()
     {
-        return $this->hasOne(Pagamento::class, 'id_pedido');
+        return $this->statusHistorico()->latest('data_status')->first();
     }
 }

@@ -6,27 +6,27 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        $this->call(EmpresaSeeder::class);
-
-        $this->call(PerfilSeeder::class);
-
-        $this->call(PlanoSeeder::class);
-
-        $this->call(AvaliacaoSeeder::class);
-
-        $this->call(CatalogoSeeder::class);
-
-        $this->call(GamificacaoDistintivoSeeder::class);
-        $this->call(GamificacaoPontoSeeder::class);
-        $this->call(GamificacaoLogSeeder::class);
-        $this->call(EmpresaDistintivoSeeder::class);
-
-        $this->call(PedidoSeeder::class);
-        $this->call(PedidoStatusSeeder::class);
-        $this->call(PagamentoSeeder::class);
-
-        $this->call(ConfiguracaoGamificacaoSeeder::class);
+        $this->call([
+            EmpresaSeeder::class,
+            TipoPerfilSeeder::class,
+            NichoSeeder::class,
+            TecnologiaSeeder::class,
+            PerfilSeeder::class,
+            EmpresaNichoSeeder::class,
+            EmpresaTecnologiaSeeder::class,
+            SeguidorSeeder::class,
+            PlanoSeeder::class,
+            ProjetoSeeder::class,
+            PedidoSeeder::class,
+            PedidoStatusSeeder::class,
+            EmpresaPlanoSeeder::class,
+            PagamentoSeeder::class,
+            AvaliacaoSeeder::class,
+        ]);
     }
 }

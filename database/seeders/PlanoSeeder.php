@@ -4,38 +4,33 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Plano;
-use App\Models\Empresa;
 
 class PlanoSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        $empresas = Empresa::all();
+        Plano::firstOrCreate([
+            'nome_plano' => 'Gratuito',
+            'valor' => 0.00,
+            'descricao' => 'Plano gratuito com funcionalidades básicas para empresas iniciantes.',
+            'data_criacao' => now()->toDateString(),
+        ]);
 
-        foreach ($empresas as $empresa) {
-            Plano::create([
-                'nome_plano' => 'Plano Gratuito',
-                'valor' => 0.00,
-                'descricao' => 'Plano básico gratuito com recursos limitados',
-                'data_criacao' => now(),
-                'id_empresa' => $empresa->id,
-            ]);
+        Plano::firstOrCreate([
+            'nome_plano' => 'Startup',
+            'valor' => 99.90,
+            'descricao' => 'Plano ideal para microempresas e startups, com mais recursos e suporte.',
+            'data_criacao' => now()->toDateString(),
+        ]);
 
-            Plano::create([
-                'nome_plano' => 'Plano Básico',
-                'valor' => 49.90,
-                'descricao' => 'Plano inicial para pequenas empresas',
-                'data_criacao' => now(),
-                'id_empresa' => $empresa->id,
-            ]);
-
-            Plano::create([
-                'nome_plano' => 'Plano Premium',
-                'valor' => 99.90,
-                'descricao' => 'Plano completo com todos os recursos',
-                'data_criacao' => now(),
-                'id_empresa' => $empresa->id,
-            ]);
-        }
+        Plano::firstOrCreate([
+            'nome_plano' => 'Corporativo',
+            'valor' => 299.90,
+            'descricao' => 'Plano completo para grandes empresas, com todos os recursos e suporte prioritário.',
+            'data_criacao' => now()->toDateString(),
+        ]);
     }
 }

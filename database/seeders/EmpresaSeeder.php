@@ -4,22 +4,40 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Empresa;
+use Illuminate\Support\Facades\Hash;
+use Faker\Factory as Faker;
 
 class EmpresaSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
+        $faker = Faker::create('pt_BR'); // Usando Faker para dados em português do Brasil
+
+        // Exemplo de uma empresa fixa
         Empresa::create([
-            'nome' => 'Empresa Exemplo',
-            'cnpj' => '12.345.678/0001-99',
-            'perfil' => 'desenvolvedor',
-            'seguidores' => 120,
-            'email' => 'empresa@example.com',
-            'senha' => 'senha123', // será bcrypt() automaticamente
-            'telefone' => '11999999999',
-            'endereco' => 'Rua das Flores, 123',
-            'nivel' => 1,
-            'pontos' => 200,
+            'nome' => 'Solução Digital Principal',
+            'cnpj' => '00000000000000', // CNPJ de teste
+            'email' => 'contato@solucaodigital.com.br',
+            'senha' => Hash::make('password123'), // Hash da senha
+            'telefone' => '(11)98765-4321',
+            'endereco' => 'Rua Principal, 123 - Centro, São Paulo - SP',
+            'data_cadastro' => now(), // Data de cadastro atual
         ]);
+
+        // Gerar 10 empresas fictícias
+        for ($i = 0; $i < 10; $i++) {
+            Empresa::create([
+                'nome' => $faker->company,
+                'cnpj' => $faker->unique()->cnpj(false), // Gera CNPJ formatado sem pontos/barras/traços
+                'email' => $faker->unique()->safeEmail,
+                'senha' => Hash::make('password'),
+                'telefone' => $faker->phoneNumber,
+                'endereco' => $faker->address,
+                'data_cadastro' => $faker->dateTimeBetween('-1 year', 'now'), // Datas de cadastro variadas
+            ]);
+        }
     }
 }

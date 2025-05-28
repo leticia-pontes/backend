@@ -1252,6 +1252,45 @@
                 ]
             }
         },
+        "/api/pedidos/{id}/aceitar": {
+            "post": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Aceita um pedido.",
+                "operationId": "6c26d0cd6f03df326602470b18487aa6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pedido aceito com sucesso"
+                    },
+                    "400": {
+                        "description": "Pedido já foi aceito"
+                    },
+                    "403": {
+                        "description": "Sem permissão para aceitar"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/pedidos/{id}/iniciar": {
             "post": {
                 "tags": [

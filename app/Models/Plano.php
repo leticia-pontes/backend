@@ -2,24 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Plano extends Model
 {
-    protected $table = 'planos';
-    protected $primaryKey = 'id';
-    public $timestamps = false;
+    use HasFactory;
 
+    protected $table = 'planos';
+    protected $primaryKey = 'id_plano';
     protected $fillable = [
         'nome_plano',
         'valor',
         'descricao',
         'data_criacao',
-        'id_empresa',
     ];
+    public $timestamps = false;
 
-    public function empresa()
+    // Relacionamento com EmpresaPlano (1:N) - Um plano pode ser assinado por muitas empresas
+    public function empresasAssinantes()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa');
+        return $this->hasMany(EmpresaPlano::class, 'id_plano', 'id_plano');
     }
 }
