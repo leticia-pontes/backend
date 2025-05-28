@@ -86,6 +86,10 @@
                                         "type": "string",
                                         "example": "Empresa Exemplo"
                                     },
+                                    "cnpj": {
+                                        "type": "string",
+                                        "example": "43040983000100"
+                                    },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
@@ -1043,7 +1047,7 @@
                 "tags": [
                     "Pedido"
                 ],
-                "summary": "Lista todos os pedidos do usuário autenticado (contratante ou desenvolvedor).",
+                "summary": "Lista todos os pedidos do usuário autenticado.",
                 "operationId": "e848822b988b4e4cf96af0f71f29581c",
                 "responses": {
                     "200": {
@@ -1075,7 +1079,7 @@
                 "tags": [
                     "Pedido"
                 ],
-                "summary": "Cria um novo pedido (apenas para contratante).",
+                "summary": "Cria um novo pedido.",
                 "operationId": "36884e796fd6f470919017f7ca543cd0",
                 "requestBody": {
                     "required": true,
@@ -1086,7 +1090,7 @@
                                     "data_pedido",
                                     "descricao",
                                     "valor",
-                                    "prazo"
+                                    "prazo_entrega"
                                 ],
                                 "properties": {
                                     "data_pedido": {
@@ -1103,14 +1107,10 @@
                                         "format": "float",
                                         "example": 1500
                                     },
-                                    "prazo": {
+                                    "prazo_entrega": {
                                         "type": "string",
                                         "format": "date",
                                         "example": "2025-06-22"
-                                    },
-                                    "desenvolvedor_id": {
-                                        "type": "integer",
-                                        "example": 2
                                     }
                                 },
                                 "type": "object"
@@ -1186,7 +1186,7 @@
                 "tags": [
                     "Pedido"
                 ],
-                "summary": "Atualiza um pedido (contratante e desenvolvedor podem atualizar campos diferentes).",
+                "summary": "Atualiza um pedido.",
                 "operationId": "c552afd071c0184bb7ded11c11c3bb41",
                 "parameters": [
                     {
@@ -1211,7 +1211,7 @@
                                         "type": "number",
                                         "format": "float"
                                     },
-                                    "prazo": {
+                                    "prazo_entrega": {
                                         "type": "string",
                                         "format": "date"
                                     },
@@ -1257,7 +1257,7 @@
                 "tags": [
                     "Pedido"
                 ],
-                "summary": "Cancela um pedido (apenas contratante).",
+                "summary": "Cancela um pedido.",
                 "operationId": "59b339e29af50124ecf4d10100bffd8a",
                 "parameters": [
                     {
@@ -1296,7 +1296,7 @@
                 "tags": [
                     "Pedido"
                 ],
-                "summary": "Conclui um pedido (apenas desenvolvedor).",
+                "summary": "Conclui um pedido.",
                 "operationId": "c911e1474f9e0dee2115f613f9fedd15",
                 "parameters": [
                     {
@@ -1572,7 +1572,7 @@
                     "data_pedido",
                     "descricao",
                     "valor",
-                    "prazo",
+                    "prazo_entrega",
                     "id_empresa"
                 ],
                 "properties": {
@@ -1594,7 +1594,7 @@
                         "format": "float",
                         "example": 1500
                     },
-                    "prazo": {
+                    "prazo_entrega": {
                         "type": "string",
                         "format": "date",
                         "example": "2025-06-22"
@@ -1602,11 +1602,6 @@
                     "id_empresa": {
                         "type": "integer",
                         "example": 1
-                    },
-                    "desenvolvedor_id": {
-                        "type": "integer",
-                        "example": 2,
-                        "nullable": true
                     },
                     "status": {
                         "type": "array",

@@ -13,14 +13,13 @@ use Illuminate\Http\Request;
  *     schema="Pedido",
  *     type="object",
  *     title="Pedido",
- *     required={"id", "data_pedido", "descricao", "valor", "prazo", "id_empresa"},
+ *     required={"id", "data_pedido", "descricao", "valor", "prazo_entrega", "id_empresa"},
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="data_pedido", type="string", format="date", example="2025-05-22"),
  *     @OA\Property(property="descricao", type="string", example="Desenvolvimento de site"),
  *     @OA\Property(property="valor", type="number", format="float", example=1500.00),
- *     @OA\Property(property="prazo", type="string", format="date", example="2025-06-22"),
+ *     @OA\Property(property="prazo_entrega", type="string", format="date", example="2025-06-22"),
  *     @OA\Property(property="id_empresa", type="integer", example=1),
- *     @OA\Property(property="desenvolvedor_id", type="integer", nullable=true, example=2),
  *     @OA\Property(
  *         property="status",
  *         type="array",
@@ -45,7 +44,7 @@ class PedidoController extends Controller
     /**
      * @OA\Get(
      *     path="/api/pedidos",
-     *     summary="Lista todos os pedidos do usuário autenticado (contratante ou desenvolvedor).",
+     *     summary="Lista todos os pedidos do usuário autenticado.",
      *     tags={"Pedido"},
      *     security={{"sanctum":{}}},
      *     @OA\Response(
@@ -66,7 +65,6 @@ class PedidoController extends Controller
 
         $pedidos = Pedido::with('status')
             ->where('id_empresa', $empresa->id)
-            ->orWhere('desenvolvedor_id', $empresa->id)
             ->get();
 
         return response()->json(['pedidos' => $pedidos]);
@@ -75,18 +73,17 @@ class PedidoController extends Controller
     /**
      * @OA\Post(
      *     path="/api/pedidos",
-     *     summary="Cria um novo pedido (apenas para contratante).",
+     *     summary="Cria um novo pedido.",
      *     tags={"Pedido"},
      *     security={{"sanctum":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"data_pedido","descricao","valor","prazo"},
+     *             required={"data_pedido","descricao","valor","prazo_entrega"},
      *             @OA\Property(property="data_pedido", type="string", format="date", example="2025-05-22"),
      *             @OA\Property(property="descricao", type="string", example="Desenvolvimento de site"),
      *             @OA\Property(property="valor", type="number", format="float", example=1500.00),
-     *             @OA\Property(property="prazo", type="string", format="date", example="2025-06-22"),
-     *             @OA\Property(property="desenvolvedor_id", type="integer", example=2)
+     *             @OA\Property(property="prazo_entrega", type="string", format="date", example="2025-06-22")
      *         )
      *     ),
      *     @OA\Response(
@@ -103,16 +100,15 @@ class PedidoController extends Controller
             'data_pedido' => 'required|date',
             'descricao' => 'required|string',
             'valor' => 'required|numeric',
-            'prazo' => 'required|date',
+            'prazo_entrega' => 'required|date',
         ]);
 
         $pedido = Pedido::create([
             'data_pedido' => $request->data_pedido,
             'descricao' => $request->descricao,
             'valor' => $request->valor,
-            'prazo' => $request->prazo,
+            'prazo_entrega' => $request->prazo_entrega,
             'id_empresa' => auth()->id(),
-            'desenvolvedor_id' => $request->desenvolvedor_id ?? null,
         ]);
 
         PedidoStatus::create([
@@ -151,7 +147,7 @@ class PedidoController extends Controller
         $pedido = Pedido::with(['status', 'pagamento'])->findOrFail($id);
         $empresa = auth()->user();
 
-        if ($pedido->id_empresa !== $empresa->id && $pedido->desenvolvedor_id !== $empresa->id) {
+        if ($pedido->id_empresa !== $empresa->id) {
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
@@ -161,7 +157,7 @@ class PedidoController extends Controller
     /**
      * @OA\Put(
      *     path="/api/pedidos/{id}",
-     *     summary="Atualiza um pedido (contratante e desenvolvedor podem atualizar campos diferentes).",
+     *     summary="Atualiza um pedido.",
      *     tags={"Pedido"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -175,7 +171,7 @@ class PedidoController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="descricao", type="string"),
      *             @OA\Property(property="valor", type="number", format="float"),
-     *             @OA\Property(property="prazo", type="string", format="date"),
+     *             @OA\Property(property="prazo_entrega", type="string", format="date"),
      *             @OA\Property(property="progresso", type="string"),
      *             @OA\Property(property="comentarios", type="string")
      *         )
@@ -195,9 +191,7 @@ class PedidoController extends Controller
         $empresa = auth()->user();
 
         if ($empresa->id === $pedido->id_empresa) {
-            $pedido->update($request->only(['descricao', 'valor', 'prazo']));
-        } elseif ($empresa->id === $pedido->desenvolvedor_id) {
-            $pedido->update($request->only(['progresso', 'comentarios']));
+            $pedido->update($request->only(['descricao', 'valor', 'prazo_entrega']));
         } else {
             return response()->json(['message' => 'Sem permissão para editar esse pedido.'], 403);
         }
@@ -208,7 +202,7 @@ class PedidoController extends Controller
     /**
      * @OA\Post(
      *     path="/api/pedidos/{id}/cancelar",
-     *     summary="Cancela um pedido (apenas contratante).",
+     *     summary="Cancela um pedido.",
      *     tags={"Pedido"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -251,7 +245,7 @@ class PedidoController extends Controller
     /**
      * @OA\Post(
      *     path="/api/pedidos/{id}/concluir",
-     *     summary="Conclui um pedido (apenas desenvolvedor).",
+     *     summary="Conclui um pedido.",
      *     tags={"Pedido"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -272,7 +266,7 @@ class PedidoController extends Controller
         $pedido = Pedido::findOrFail($id);
         $empresa = auth()->user();
 
-        if (! $empresa->canConclude($pedido)) {
+        if ($empresa->id !== $pedido->id_empresa) {
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
