@@ -20,7 +20,7 @@ class PedidoStatusSeeder extends Seeder
             ]);
 
             PedidoStatus::create([
-                'status' => 'em andamento',
+                'status' => 'em_andamento',
                 'data_status' => now()->addDays(3),
                 'id_pedido' => $pedido->id,
             ]);

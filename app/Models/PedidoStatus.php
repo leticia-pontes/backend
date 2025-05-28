@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\PedidoStatusEnum;
 
 class PedidoStatus extends Model
 {
+    protected $casts = [
+        'status' => PedidoStatusEnum::class,
+    ];
+
     protected $table = 'pedido_status';
     protected $primaryKey = 'id';
     public $timestamps = false;

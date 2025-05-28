@@ -35,6 +35,8 @@ Route::middleware('auth:sanctum')->prefix('pedidos')->group(function () {
     Route::get('/', [PedidoController::class, 'index']);
     Route::get('/{id}', [PedidoController::class, 'show']);
     Route::put('/{id}', [PedidoController::class, 'update']);
+    Route::post('/{id}/aceitar', [PedidoController::class, 'aceitar']);
+    Route::post('/{id}/iniciar', [PedidoController::class, 'iniciar']);
     Route::post('/{id}/cancelar', [PedidoController::class, 'cancelar']);
     Route::post('/{id}/concluir', [PedidoController::class, 'concluir']);
 });

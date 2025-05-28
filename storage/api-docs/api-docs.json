@@ -1252,6 +1252,45 @@
                 ]
             }
         },
+        "/api/pedidos/{id}/iniciar": {
+            "post": {
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "Inicia o desenvolvimento de um pedido.",
+                "operationId": "2bdb22af94790d019b4422aba68939b2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pedido iniciado com sucesso"
+                    },
+                    "400": {
+                        "description": "Pedido já está em andamento"
+                    },
+                    "403": {
+                        "description": "Sem permissão para iniciar"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/pedidos/{id}/cancelar": {
             "post": {
                 "tags": [

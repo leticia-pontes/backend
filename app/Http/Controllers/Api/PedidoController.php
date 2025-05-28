@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Enums\PedidoStatusEnum;
 use App\Models\Pedido;
 use App\Models\PedidoStatus;
 use App\Models\ConfiguracaoGamificacao;
@@ -112,7 +113,7 @@ class PedidoController extends Controller
         ]);
 
         PedidoStatus::create([
-            'status' => 'aguardando',
+            'status' => PedidoStatusEnum::Aguardando,
             'data_status' => now(),
             'id_pedido' => $pedido->id,
         ]);
@@ -201,6 +202,92 @@ class PedidoController extends Controller
 
     /**
      * @OA\Post(
+     *     path="/api/pedidos/{id}/aceitar",
+     *     summary="Aceita um pedido.",
+     *     tags={"Pedido"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID do pedido",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Pedido aceito com sucesso"),
+     *     @OA\Response(response=400, description="Pedido já foi aceito"),
+     *     @OA\Response(response=403, description="Sem permissão para aceitar"),
+     *     @OA\Response(response=404, description="Pedido não encontrado")
+     * )
+     */
+    public function aceitar($id)
+    {
+        $pedido = Pedido::findOrFail($id);
+        $empresa = auth()->user();
+
+        if ($empresa->id !== $pedido->id_empresa) {
+            return response()->json(['message' => 'Sem permissão para aceitar.'], 403);
+        }
+
+        $statusAtual = $pedido->statusAtual();
+
+        if ($statusAtual->status === PedidoStatusEnum::Aceito) {
+            return response()->json(['message' => 'Pedido já foi aceito.'], 400);
+        }
+
+        PedidoStatus::create([
+            'status' => PedidoStatusEnum::Aceito,
+            'data_status' => now(),
+            'id_pedido' => $pedido->id,
+        ]);
+
+        return response()->json(['message' => 'Pedido aceito com sucesso.']);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/pedidos/{id}/iniciar",
+     *     summary="Inicia o desenvolvimento de um pedido.",
+     *     tags={"Pedido"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID do pedido",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Pedido iniciado com sucesso"),
+     *     @OA\Response(response=400, description="Pedido já está em andamento"),
+     *     @OA\Response(response=403, description="Sem permissão para iniciar"),
+     *     @OA\Response(response=404, description="Pedido não encontrado")
+     * )
+     */
+    public function iniciar($id)
+    {
+        $pedido = Pedido::findOrFail($id);
+        $empresa = auth()->user();
+
+        if ($empresa->id !== $pedido->id_empresa) {
+            return response()->json(['message' => 'Sem permissão para iniciar.'], 403);
+        }
+
+        $statusAtual = $pedido->statusAtual();
+
+        if ($statusAtual->status === PedidoStatusEnum::EmAndamento) {
+            return response()->json(['message' => 'Pedido já está em andamento.'], 400);
+        }
+
+        PedidoStatus::create([
+            'status' => PedidoStatusEnum::EmAndamento,
+            'data_status' => now(),
+            'id_pedido' => $pedido->id,
+        ]);
+
+        return response()->json(['message' => 'Pedido iniciado com sucesso.']);
+    }
+
+    /**
+     * @OA\Post(
      *     path="/api/pedidos/{id}/cancelar",
      *     summary="Cancela um pedido.",
      *     tags={"Pedido"},
@@ -229,12 +316,12 @@ class PedidoController extends Controller
 
         $statusAtual = $pedido->statusAtual();
 
-        if (in_array($statusAtual->status, ['cancelado', 'concluido'])) {
+        if (in_array($statusAtual->status, [PedidoStatusEnum::Cancelado, PedidoStatusEnum::Concluido])) {
             return response()->json(['message' => 'Pedido já está finalizado.'], 400);
         }
 
         PedidoStatus::create([
-            'status' => 'cancelado',
+            'status' => PedidoStatusEnum::Cancelado,
             'data_status' => now(),
             'id_pedido' => $pedido->id,
         ]);
@@ -271,7 +358,7 @@ class PedidoController extends Controller
         }
 
         PedidoStatus::create([
-            'status' => 'concluido',
+            'status' => PedidoStatusEnum::Concluido,
             'data_status' => now(),
             'id_pedido' => $pedido->id,
         ]);
