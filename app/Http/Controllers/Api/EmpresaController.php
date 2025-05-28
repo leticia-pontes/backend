@@ -6,8 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
-
+/**
+ * @OA\Tag(
+ *     name="Empresa",
+ *     description="Operações relacionadas a empresas"
+ * )
+ */
 class EmpresaController extends Controller
 {
     /**
@@ -18,14 +24,16 @@ class EmpresaController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Lista de Empresas",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Empresa"))
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Empresa")
+     *         )
      *     )
      * )
      */
     public function index()
     {
-        $empresas = Empresa::all();
-        return response()->json($empresas);
+        return response()->json(Empresa::all());
     }
 
     /**
@@ -35,43 +43,35 @@ class EmpresaController extends Controller
      *     tags={"Empresa"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"nome","cnpj","email","senha"},
-     *             @OA\Property(property="nome", type="string", example="Empresa Exemplo"),
-     *             @OA\Property(property="cnpj", type="string", example="12.345.678/0001-99"),
-     *             @OA\Property(property="perfil", type="string", example="perfil_exemplo"),
-     *             @OA\Property(property="seguidores", type="integer", example=100),
-     *             @OA\Property(property="email", type="string", format="email", example="email@exemplo.com"),
-     *             @OA\Property(property="senha", type="string", format="password", example="123456"),
-     *             @OA\Property(property="telefone", type="string", example="(11) 99999-9999"),
-     *             @OA\Property(property="endereco", type="string", example="Rua Exemplo, 123")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/EmpresaCreateRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Empresa criada com sucesso"
+     *         description="Empresa criada com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/Empresa")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Erro de validação"
      *     )
      * )
      */
     public function store(Request $request)
     {
-        Log::info('Dados recebidos:', $request->all());
-
-        $exists = \DB::table('empresas')->where('cnpj', $request->cnpj)->exists();
-
-        Log::info('Existe empresa com esse CNPJ? ' . ($exists ? 'Sim' : 'Não'));
+        Log::info('Dados recebidos para criação de empresa:', $request->all());
 
         $validatedData = $request->validate([
             'nome' => 'required|string|max:255',
             'cnpj' => 'required|string|max:20|unique:empresas,cnpj',
-            'perfil' => 'nullable|string',
+            'perfil' => 'nullable|string|max:255',
             'seguidores' => 'nullable|integer',
             'email' => 'required|email|unique:empresas,email',
             'senha' => 'required|string|min:6',
             'telefone' => 'nullable|string|max:20',
             'endereco' => 'nullable|string|max:255',
         ]);
+
+        $validatedData['senha'] = Hash::make($validatedData['senha']);
 
         $empresa = Empresa::create($validatedData);
 
@@ -81,14 +81,14 @@ class EmpresaController extends Controller
     /**
      * @OA\Get(
      *     path="/api/empresas/{id}",
-     *     summary="Mostra uma empresa pelo id",
+     *     summary="Mostra uma empresa pelo ID",
      *     tags={"Empresa"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="ID da empresa",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="integer", format="int64")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -110,14 +110,14 @@ class EmpresaController extends Controller
     /**
      * @OA\Put(
      *     path="/api/empresas/{id}",
-     *     summary="Atualiza uma empresa",
+     *     summary="Atualiza uma empresa existente",
      *     tags={"Empresa"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="ID da empresa",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="integer", format="int64")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
@@ -125,7 +125,7 @@ class EmpresaController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Empresa atualizada",
+     *         description="Empresa atualizada com sucesso",
      *         @OA\JsonContent(ref="#/components/schemas/Empresa")
      *     ),
      *     @OA\Response(
@@ -145,7 +145,7 @@ class EmpresaController extends Controller
         $validatedData = $request->validate([
             'nome' => 'sometimes|required|string|max:255',
             'cnpj' => 'sometimes|required|string|max:20|unique:empresas,cnpj,' . $id . ',id',
-            'perfil' => 'nullable|string',
+            'perfil' => 'nullable|string|max:255',
             'seguidores' => 'nullable|integer',
             'email' => 'sometimes|required|email|unique:empresas,email,' . $id . ',id',
             'senha' => 'sometimes|required|string|min:6',
@@ -154,7 +154,7 @@ class EmpresaController extends Controller
         ]);
 
         if (isset($validatedData['senha'])) {
-            $validatedData['senha'] = bcrypt($validatedData['senha']);
+            $validatedData['senha'] = Hash::make($validatedData['senha']);
         }
 
         $empresa->update($validatedData);
@@ -165,14 +165,14 @@ class EmpresaController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/empresas/{id}",
-     *     summary="Deleta uma empresa",
+     *     summary="Deleta uma empresa existente",
      *     tags={"Empresa"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="ID da empresa",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="integer", format="int64")
      *     ),
      *     @OA\Response(
      *         response=204,

@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Swagger\Schemas;
+
+use OpenApi\Annotations as OA;
+
 /**
  * @OA\Schema(
  *     schema="Pedido",
@@ -32,3 +36,8 @@
  *     )
  * )
  */
+
+class PedidoSchema
+{
+
+}

@@ -55,9 +55,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Credenciais inválidas"
                     }
                 }
             }
@@ -79,7 +76,7 @@
                                     "email",
                                     "senha",
                                     "senha_confirmation",
-                                    "perfil"
+                                    "nome_tipo_perfil"
                                 ],
                                 "properties": {
                                     "nome": {
@@ -105,13 +102,48 @@
                                         "format": "password",
                                         "example": "senha123"
                                     },
-                                    "perfil": {
+                                    "nome_tipo_perfil": {
                                         "type": "string",
                                         "enum": [
-                                            "empresa_contratante",
-                                            "desenvolvedor"
+                                            "Contratante",
+                                            "Desenvolvedor"
                                         ],
-                                        "example": "empresa_contratante"
+                                        "example": "Contratante"
+                                    },
+                                    "telefone": {
+                                        "type": "string",
+                                        "example": "11987654321",
+                                        "nullable": true
+                                    },
+                                    "endereco": {
+                                        "type": "string",
+                                        "example": "Rua Exemplo, 123",
+                                        "nullable": true
+                                    },
+                                    "foto": {
+                                        "type": "string",
+                                        "example": "http://example.com/foto.jpg",
+                                        "nullable": true
+                                    },
+                                    "biografia": {
+                                        "type": "string",
+                                        "example": "Uma empresa inovadora...",
+                                        "nullable": true
+                                    },
+                                    "nicho_mercado_nome": {
+                                        "type": "string",
+                                        "example": "Tecnologia",
+                                        "nullable": true
+                                    },
+                                    "tecnologia_nome": {
+                                        "type": "string",
+                                        "example": "Laravel",
+                                        "nullable": true
+                                    },
+                                    "redes_sociais": {
+                                        "description": "String JSON contendo links de redes sociais, ex: {'instagram':'@exemplo', 'linkedin':'/empresa'}",
+                                        "type": "string",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -127,19 +159,16 @@
                                 "schema": {
                                     "properties": {
                                         "message": {
-                                            "type": "string",
-                                            "example": "Cadastro realizado com sucesso"
+                                            "type": "string"
                                         },
                                         "empresa": {
                                             "type": "object"
                                         },
                                         "access_token": {
-                                            "type": "string",
-                                            "example": "1|xpto123..."
+                                            "type": "string"
                                         },
                                         "token_type": {
-                                            "type": "string",
-                                            "example": "Bearer"
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -165,6 +194,158 @@
                 }
             }
         },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Logout de empresa",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
+                "responses": {
+                    "200": {
+                        "description": "Logout realizado com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Dados da empresa autenticada",
+                "operationId": "b5de204f5e452ef51327c691aa99e77c",
+                "responses": {
+                    "200": {
+                        "description": "Dados da empresa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id_empresa": {
+                                            "type": "integer"
+                                        },
+                                        "nome": {
+                                            "type": "string"
+                                        },
+                                        "cnpj": {
+                                            "type": "string"
+                                        },
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "senha": {
+                                            "description": "Senha oculta",
+                                            "type": "string"
+                                        },
+                                        "telefone": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "endereco": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "data_cadastro": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "perfil": {
+                                            "properties": {
+                                                "id_perfil": {
+                                                    "type": "integer"
+                                                },
+                                                "id_empresa": {
+                                                    "type": "integer"
+                                                },
+                                                "id_tipo_perfil": {
+                                                    "type": "integer"
+                                                },
+                                                "foto": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "biografia": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "redes_sociais": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "tipo_perfil": {
+                                                    "properties": {
+                                                        "id_tipo_perfil": {
+                                                            "type": "integer"
+                                                        },
+                                                        "nome_tipo": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "nichos": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "tecnologias": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "seguidores": {
+                                            "type": "array",
+                                            "items": {
+                                                "description": "Empresas que esta empresa segue",
+                                                "type": "object"
+                                            }
+                                        },
+                                        "seguindo": {
+                                            "type": "array",
+                                            "items": {
+                                                "description": "Empresas que seguem esta empresa",
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/avaliacoes": {
             "get": {
                 "tags": [
@@ -174,7 +355,17 @@
                 "operationId": "811a8522834579e57cb195105e190ee8",
                 "responses": {
                     "200": {
-                        "description": "Lista de avaliações"
+                        "description": "Lista de avaliações",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Avaliacao"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -192,24 +383,20 @@
                                 "required": [
                                     "nota",
                                     "comentario",
-                                    "data_avaliacao",
                                     "id_empresa"
                                 ],
                                 "properties": {
                                     "nota": {
+                                        "description": "Nota da avaliação (1-5)",
                                         "type": "integer",
                                         "example": 5
                                     },
                                     "comentario": {
                                         "type": "string",
-                                        "example": "Muito bom"
-                                    },
-                                    "data_avaliacao": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-05-23"
+                                        "example": "Empresa excelente, serviço de qualidade!"
                                     },
                                     "id_empresa": {
+                                        "description": "ID da empresa que está sendo avaliada",
                                         "type": "integer",
                                         "example": 1
                                     }
@@ -221,9 +408,42 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Avaliação criada"
+                        "description": "Avaliação criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Avaliacao"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "422": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/avaliacoes/{id}": {
@@ -239,13 +459,21 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Avaliação encontrada"
+                        "description": "Avaliação encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Avaliacao"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "Avaliação não encontrada"
@@ -264,7 +492,8 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -279,12 +508,7 @@
                                     },
                                     "comentario": {
                                         "type": "string",
-                                        "example": "Atualização do comentário"
-                                    },
-                                    "data_avaliacao": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-06-01"
+                                        "example": "Comentário atualizado para 'Serviço ótimo!'"
                                     }
                                 },
                                 "type": "object"
@@ -294,9 +518,33 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Avaliação atualizada"
+                        "description": "Avaliação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Avaliacao"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Não autorizado a atualizar esta avaliação"
+                    },
+                    "404": {
+                        "description": "Avaliação não encontrada"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -310,189 +558,30 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "responses": {
                     "204": {
-                        "description": "Avaliação removida"
-                    }
-                }
-            }
-        },
-        "/api/catalogos": {
-            "get": {
-                "tags": [
-                    "Catálogos"
-                ],
-                "summary": "Listar todos os catálogos",
-                "operationId": "6be93f181b751655105df230ac037ef8",
-                "responses": {
-                    "200": {
-                        "description": "Lista de catálogos"
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Catálogos"
-                ],
-                "summary": "Criar um novo catálogo",
-                "operationId": "26d350396d7e86077e89a3051c9ac841",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "arquivo",
-                                    "nome_arquivo",
-                                    "descricao",
-                                    "data_criacao",
-                                    "versao",
-                                    "ativo",
-                                    "id_empresa"
-                                ],
-                                "properties": {
-                                    "arquivo": {
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "nome_arquivo": {
-                                        "type": "string",
-                                        "example": "documento.pdf"
-                                    },
-                                    "descricao": {
-                                        "type": "string",
-                                        "example": "Apresentação institucional"
-                                    },
-                                    "data_criacao": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-05-20"
-                                    },
-                                    "versao": {
-                                        "type": "string",
-                                        "example": "v1.0"
-                                    },
-                                    "ativo": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "id_empresa": {
-                                        "type": "integer",
-                                        "example": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Catálogo criado"
-                    }
-                }
-            }
-        },
-        "/api/catalogos/{id}": {
-            "get": {
-                "tags": [
-                    "Catálogos"
-                ],
-                "summary": "Exibir um catálogo específico",
-                "operationId": "e9b85c5025015d6425b875eff1b20f91",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Catálogo encontrado"
+                        "description": "Avaliação removida com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Não autorizado a remover esta avaliação"
                     },
                     "404": {
-                        "description": "Catálogo não encontrado"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Catálogos"
-                ],
-                "summary": "Atualizar um catálogo",
-                "operationId": "548b5db253cf82f5cbcb889c9d613d23",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "nome_arquivo": {
-                                        "type": "string"
-                                    },
-                                    "descricao": {
-                                        "type": "string"
-                                    },
-                                    "data_criacao": {
-                                        "type": "string",
-                                        "format": "date"
-                                    },
-                                    "versao": {
-                                        "type": "string"
-                                    },
-                                    "ativo": {
-                                        "type": "boolean"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
+                        "description": "Avaliação não encontrada"
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": "Catálogo atualizado"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Catálogos"
-                ],
-                "summary": "Remover um catálogo",
-                "operationId": "f6f3e29c671ae9ff17f347e63aab2aec",
-                "parameters": [
+                "security": [
                     {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "sanctum": []
                     }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Catálogo removido"
-                    }
-                }
+                ]
             }
         },
         "/api/empresas": {
@@ -529,56 +618,24 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "nome",
-                                    "cnpj",
-                                    "email",
-                                    "senha"
-                                ],
-                                "properties": {
-                                    "nome": {
-                                        "type": "string",
-                                        "example": "Empresa Exemplo"
-                                    },
-                                    "cnpj": {
-                                        "type": "string",
-                                        "example": "12.345.678/0001-99"
-                                    },
-                                    "perfil": {
-                                        "type": "string",
-                                        "example": "perfil_exemplo"
-                                    },
-                                    "seguidores": {
-                                        "type": "integer",
-                                        "example": 100
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "email@exemplo.com"
-                                    },
-                                    "senha": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "123456"
-                                    },
-                                    "telefone": {
-                                        "type": "string",
-                                        "example": "(11) 99999-9999"
-                                    },
-                                    "endereco": {
-                                        "type": "string",
-                                        "example": "Rua Exemplo, 123"
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/EmpresaCreateRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "description": "Empresa criada com sucesso"
+                        "description": "Empresa criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Empresa"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
                     }
                 }
             }
@@ -588,7 +645,7 @@
                 "tags": [
                     "Empresa"
                 ],
-                "summary": "Mostra uma empresa pelo id",
+                "summary": "Mostra uma empresa pelo ID",
                 "operationId": "7e0d938df2a2305cd42451cc84ec72ec",
                 "parameters": [
                     {
@@ -597,7 +654,8 @@
                         "description": "ID da empresa",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -621,7 +679,7 @@
                 "tags": [
                     "Empresa"
                 ],
-                "summary": "Atualiza uma empresa",
+                "summary": "Atualiza uma empresa existente",
                 "operationId": "61d6235f805bd62afcf89b24a6bae3aa",
                 "parameters": [
                     {
@@ -630,7 +688,8 @@
                         "description": "ID da empresa",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -646,7 +705,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Empresa atualizada",
+                        "description": "Empresa atualizada com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -667,7 +726,7 @@
                 "tags": [
                     "Empresa"
                 ],
-                "summary": "Deleta uma empresa",
+                "summary": "Deleta uma empresa existente",
                 "operationId": "ba97e99dc7744b02f562b861b32e29a6",
                 "parameters": [
                     {
@@ -676,7 +735,8 @@
                         "description": "ID da empresa",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -836,8 +896,16 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -850,38 +918,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "valor",
-                                    "data_pagamento",
-                                    "metodo_pagamento",
-                                    "status",
-                                    "id_pedido"
-                                ],
-                                "properties": {
-                                    "valor": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 100.5
-                                    },
-                                    "data_pagamento": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-05-23"
-                                    },
-                                    "metodo_pagamento": {
-                                        "type": "string",
-                                        "example": "cartão de crédito"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "example": "confirmado"
-                                    },
-                                    "id_pedido": {
-                                        "type": "integer",
-                                        "example": 1
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/PagamentoCreateRequest"
                             }
                         }
                     }
@@ -897,10 +934,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "422": {
                         "description": "Erro de validação"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/pagamentos/{id}": {
@@ -917,7 +962,8 @@
                         "description": "ID do pagamento",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -932,10 +978,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "404": {
                         "description": "Pagamento não encontrado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -950,7 +1004,8 @@
                         "description": "ID do pagamento",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
@@ -959,26 +1014,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "properties": {
-                                    "valor": {
-                                        "type": "number",
-                                        "format": "float"
-                                    },
-                                    "data_pagamento": {
-                                        "type": "string",
-                                        "format": "date"
-                                    },
-                                    "metodo_pagamento": {
-                                        "type": "string"
-                                    },
-                                    "status": {
-                                        "type": "string"
-                                    },
-                                    "id_pedido": {
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/PagamentoUpdateRequest"
                             }
                         }
                     }
@@ -994,13 +1030,21 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "404": {
                         "description": "Pagamento não encontrado"
                     },
                     "422": {
                         "description": "Erro de validação"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -1036,10 +1080,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "404": {
                         "description": "Pagamento não encontrado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/pedidos": {
@@ -1600,13 +1652,473 @@
                     }
                 }
             }
+        },
+        "/api/projetos": {
+            "get": {
+                "tags": [
+                    "Projetos"
+                ],
+                "summary": "Listar todos os projetos",
+                "operationId": "88e1f5b58f31f78ac4f9c29c51b2b0ba",
+                "responses": {
+                    "200": {
+                        "description": "Lista de projetos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Projeto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Projetos"
+                ],
+                "summary": "Criar um novo projeto",
+                "operationId": "b98fd48a5abec33d26e9af7abd8e0b02",
+                "requestBody": {
+                    "description": "Dados para criar um novo projeto, incluindo o arquivo binário",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "arquivo",
+                                    "nome_arquivo",
+                                    "descricao",
+                                    "id_empresa"
+                                ],
+                                "properties": {
+                                    "arquivo": {
+                                        "description": "O arquivo binário do projeto (ex: PDF, imagem). Use form-data.",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "nome_arquivo": {
+                                        "description": "Nome original do arquivo enviado",
+                                        "type": "string"
+                                    },
+                                    "descricao": {
+                                        "description": "Descrição detalhada do projeto",
+                                        "type": "string"
+                                    },
+                                    "versao": {
+                                        "description": "Versão do projeto (opcional)",
+                                        "type": "string"
+                                    },
+                                    "ativo": {
+                                        "description": "Status de ativação do projeto (opcional, padrão true)",
+                                        "type": "boolean"
+                                    },
+                                    "id_empresa": {
+                                        "description": "ID da empresa à qual o projeto pertence",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Projeto criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Projeto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/projetos/{id}": {
+            "get": {
+                "tags": [
+                    "Projetos"
+                ],
+                "summary": "Exibir um projeto específico",
+                "operationId": "a7bb6e38f95809182a60fea7624e2c87",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "description": "ID do Projeto",
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Projeto encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Projeto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Projeto não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Projetos"
+                ],
+                "summary": "Atualizar um projeto existente",
+                "operationId": "84b63cdbc13b927614038111d71740cd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "description": "ID do Projeto",
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Dados para atualizar um projeto (todos os campos são opcionais)",
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "arquivo": {
+                                        "description": "Um novo arquivo binário do projeto (opcional, para substituição).",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "nome_arquivo": {
+                                        "description": "Nome atualizado do arquivo",
+                                        "type": "string"
+                                    },
+                                    "descricao": {
+                                        "description": "Descrição atualizada do projeto.",
+                                        "type": "string"
+                                    },
+                                    "versao": {
+                                        "description": "Nova versão do projeto",
+                                        "type": "string"
+                                    },
+                                    "ativo": {
+                                        "description": "Novo status de ativação",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Projeto atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Projeto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Não autorizado a atualizar este projeto"
+                    },
+                    "404": {
+                        "description": "Projeto não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Projetos"
+                ],
+                "summary": "Remover um projeto",
+                "operationId": "70b8200445ebf2b0ed35ffd8348b66f7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "description": "ID do Projeto",
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Projeto removido com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "403": {
+                        "description": "Não autorizado a remover este projeto"
+                    },
+                    "404": {
+                        "description": "Projeto não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
+            "Avaliacao": {
+                "title": "Avaliacao",
+                "description": "Modelo de Avaliação",
+                "properties": {
+                    "id_avaliacao": {
+                        "description": "ID da avaliação",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nota": {
+                        "description": "Nota da avaliação (1-5)",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "comentario": {
+                        "description": "Comentário da avaliação",
+                        "type": "string"
+                    },
+                    "data_avaliacao": {
+                        "description": "Data em que a avaliação foi feita",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "id_empresa": {
+                        "description": "ID da empresa que está sendo avaliada",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "id_empresa_avaliadora": {
+                        "description": "ID da empresa que fez a avaliação",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "type": "object"
+            },
+            "Empresa": {
+                "title": "Empresa",
+                "description": "Detalhes de uma empresa",
+                "required": [
+                    "id",
+                    "nome",
+                    "cnpj",
+                    "email"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único da empresa",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "nome": {
+                        "description": "Nome da empresa",
+                        "type": "string",
+                        "example": "Empresa de Soluções Ltda."
+                    },
+                    "cnpj": {
+                        "description": "CNPJ da empresa",
+                        "type": "string",
+                        "example": "12.345.678/0001-99"
+                    },
+                    "perfil": {
+                        "description": "Perfil da empresa (opcional)",
+                        "type": "string",
+                        "example": "Tecnologia e Inovação",
+                        "nullable": true
+                    },
+                    "seguidores": {
+                        "description": "Número de seguidores da empresa (opcional)",
+                        "type": "integer",
+                        "example": 1500,
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "Endereço de e-mail da empresa",
+                        "type": "string",
+                        "format": "email",
+                        "example": "contato@empresasolucao.com"
+                    },
+                    "telefone": {
+                        "description": "Número de telefone da empresa (opcional)",
+                        "type": "string",
+                        "example": "(11) 98765-4321",
+                        "nullable": true
+                    },
+                    "endereco": {
+                        "description": "Endereço completo da empresa (opcional)",
+                        "type": "string",
+                        "example": "Av. Principal, 1000 - Centro",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Timestamp de criação do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp da última atualização do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "EmpresaCreateRequest": {
+                "title": "EmpresaCreateRequest",
+                "description": "Dados necessários para criar uma nova empresa",
+                "required": [
+                    "nome",
+                    "cnpj",
+                    "email",
+                    "senha"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "example": "Nova Empresa Ltda."
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "example": "98.765.432/0001-10"
+                    },
+                    "perfil": {
+                        "type": "string",
+                        "example": "Consultoria",
+                        "nullable": true
+                    },
+                    "seguidores": {
+                        "type": "integer",
+                        "example": 50,
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "registro@novaempresa.com"
+                    },
+                    "senha": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "senha_segura123"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "example": "(21) 91234-5678",
+                        "nullable": true
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "example": "Rua da Inovação, 50 - Bairro Novo",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "EmpresaUpdateRequest": {
+                "title": "EmpresaUpdateRequest",
+                "description": "Dados opcionais para atualizar uma empresa existente",
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "example": "Empresa Atualizada S.A."
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "example": "12.345.678/0001-99"
+                    },
+                    "perfil": {
+                        "type": "string",
+                        "example": "Software House",
+                        "nullable": true
+                    },
+                    "seguidores": {
+                        "type": "integer",
+                        "example": 2000,
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "novo.email@empresa.com"
+                    },
+                    "senha": {
+                        "description": "Deixe vazio para não alterar",
+                        "type": "string",
+                        "format": "password",
+                        "example": "nova_senha_456"
+                    },
+                    "telefone": {
+                        "type": "string",
+                        "example": "(11) 99887-7665",
+                        "nullable": true
+                    },
+                    "endereco": {
+                        "type": "string",
+                        "example": "Av. Central, 500 - Distrito Industrial",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "Pagamento": {
                 "title": "Pagamento",
+                "description": "Detalhes de um pagamento",
                 "required": [
+                    "id",
                     "valor",
                     "data_pagamento",
                     "metodo_pagamento",
@@ -1615,26 +2127,112 @@
                 ],
                 "properties": {
                     "id": {
+                        "description": "ID único do pagamento",
                         "type": "integer",
-                        "readOnly": true
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
                     },
                     "valor": {
+                        "description": "Valor total do pagamento",
                         "type": "number",
                         "format": "float",
                         "example": 100.5
                     },
                     "data_pagamento": {
+                        "description": "Data em que o pagamento foi realizado",
                         "type": "string",
                         "format": "date",
                         "example": "2025-05-23"
                     },
                     "metodo_pagamento": {
+                        "description": "Método de pagamento (ex: cartão, boleto, pix)",
                         "type": "string",
-                        "example": "cartao"
+                        "example": "cartao de credito"
+                    },
+                    "status": {
+                        "description": "Status atual do pagamento (ex: pago, pendente, cancelado)",
+                        "type": "string",
+                        "example": "pago"
+                    },
+                    "id_pedido": {
+                        "description": "ID do pedido ao qual este pagamento está associado",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "description": "Timestamp de criação do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp da última atualização do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "PagamentoCreateRequest": {
+                "title": "PagamentoCreateRequest",
+                "description": "Dados necessários para criar um novo pagamento",
+                "required": [
+                    "valor",
+                    "data_pagamento",
+                    "metodo_pagamento",
+                    "status",
+                    "id_pedido"
+                ],
+                "properties": {
+                    "valor": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 250
+                    },
+                    "data_pagamento": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-05-24"
+                    },
+                    "metodo_pagamento": {
+                        "type": "string",
+                        "example": "pix"
                     },
                     "status": {
                         "type": "string",
-                        "example": "pago"
+                        "example": "pendente"
+                    },
+                    "id_pedido": {
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "PagamentoUpdateRequest": {
+                "title": "PagamentoUpdateRequest",
+                "description": "Dados opcionais para atualizar um pagamento existente",
+                "properties": {
+                    "valor": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 120.75
+                    },
+                    "data_pagamento": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-05-25"
+                    },
+                    "metodo_pagamento": {
+                        "type": "string",
+                        "example": "boleto"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "cancelado"
                     },
                     "id_pedido": {
                         "type": "integer",
@@ -1650,7 +2248,7 @@
                     "data_pedido",
                     "descricao",
                     "valor",
-                    "prazo_entrega",
+                    "prazo",
                     "id_empresa"
                 ],
                 "properties": {
@@ -1672,7 +2270,7 @@
                         "format": "float",
                         "example": 1500
                     },
-                    "prazo_entrega": {
+                    "prazo": {
                         "type": "string",
                         "format": "date",
                         "example": "2025-06-22"
@@ -1680,6 +2278,11 @@
                     "id_empresa": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "desenvolvedor_id": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
                     },
                     "status": {
                         "type": "array",
@@ -1733,130 +2336,6 @@
                 },
                 "type": "object"
             },
-            "Empresa": {
-                "title": "Empresa",
-                "required": [
-                    "id",
-                    "nome",
-                    "cnpj",
-                    "email"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "nome": {
-                        "type": "string",
-                        "example": "Empresa Exemplo"
-                    },
-                    "cnpj": {
-                        "type": "string",
-                        "example": "12.345.678/0001-99"
-                    },
-                    "perfil": {
-                        "type": "string",
-                        "example": "Perfil X"
-                    },
-                    "seguidores": {
-                        "type": "integer",
-                        "example": 100
-                    },
-                    "email": {
-                        "type": "string",
-                        "example": "contato@empresa.com"
-                    },
-                    "telefone": {
-                        "type": "string",
-                        "example": "(11) 99999-9999"
-                    },
-                    "endereco": {
-                        "type": "string",
-                        "example": "Rua Exemplo, 123"
-                    }
-                },
-                "type": "object"
-            },
-            "EmpresaCreateRequest": {
-                "required": [
-                    "nome",
-                    "cnpj",
-                    "email",
-                    "senha"
-                ],
-                "properties": {
-                    "nome": {
-                        "type": "string",
-                        "example": "Empresa Exemplo"
-                    },
-                    "cnpj": {
-                        "type": "string",
-                        "example": "12.345.678/0001-99"
-                    },
-                    "perfil": {
-                        "type": "string",
-                        "example": "Perfil X"
-                    },
-                    "seguidores": {
-                        "type": "integer",
-                        "example": 100
-                    },
-                    "email": {
-                        "type": "string",
-                        "example": "contato@empresa.com"
-                    },
-                    "senha": {
-                        "type": "string",
-                        "example": "senha123"
-                    },
-                    "telefone": {
-                        "type": "string",
-                        "example": "(11) 99999-9999"
-                    },
-                    "endereco": {
-                        "type": "string",
-                        "example": "Rua Exemplo, 123"
-                    }
-                },
-                "type": "object"
-            },
-            "EmpresaUpdateRequest": {
-                "properties": {
-                    "nome": {
-                        "type": "string",
-                        "example": "Empresa Exemplo"
-                    },
-                    "cnpj": {
-                        "type": "string",
-                        "example": "12.345.678/0001-99"
-                    },
-                    "perfil": {
-                        "type": "string",
-                        "example": "Perfil X"
-                    },
-                    "seguidores": {
-                        "type": "integer",
-                        "example": 100
-                    },
-                    "email": {
-                        "type": "string",
-                        "example": "contato@empresa.com"
-                    },
-                    "senha": {
-                        "type": "string",
-                        "example": "senha123"
-                    },
-                    "telefone": {
-                        "type": "string",
-                        "example": "(11) 99999-9999"
-                    },
-                    "endereco": {
-                        "type": "string",
-                        "example": "Rua Exemplo, 123"
-                    }
-                },
-                "type": "object"
-            },
             "Perfil": {
                 "title": "Perfil",
                 "properties": {
@@ -1900,6 +2379,90 @@
                         "$ref": "#/components/schemas/Perfil"
                     }
                 ]
+            },
+            "Projeto": {
+                "title": "Projeto",
+                "description": "Detalhes de um Projeto",
+                "required": [
+                    "id",
+                    "arquivo",
+                    "nome_arquivo",
+                    "descricao",
+                    "data_criacao",
+                    "id_empresa"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único do projeto",
+                        "type": "integer",
+                        "format": "int64",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "arquivo": {
+                        "description": "Caminho ou URL do arquivo do projeto armazenado (Ex: storage/projetos/documento.pdf)",
+                        "type": "string",
+                        "example": "storage/projetos/documento_projeto_final.pdf"
+                    },
+                    "nome_arquivo": {
+                        "description": "Nome original do arquivo enviado",
+                        "type": "string",
+                        "example": "Relatório Anual 2024.pdf"
+                    },
+                    "descricao": {
+                        "description": "Descrição detalhada do projeto",
+                        "type": "string",
+                        "example": "Este projeto abrange a otimização de processos internos e a expansão de mercado para o próximo ano."
+                    },
+                    "data_criacao": {
+                        "description": "Data de criação do projeto (formato ISO 8601: YYYY-MM-DD)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-05-28"
+                    },
+                    "versao": {
+                        "description": "Versão do projeto (opcional)",
+                        "type": "string",
+                        "example": "1.0.1"
+                    },
+                    "ativo": {
+                        "description": "Status de ativação do projeto (true se ativo, false se inativo)",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "id_empresa": {
+                        "description": "ID da empresa à qual o projeto pertence",
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 5
+                    },
+                    "created_at": {
+                        "description": "Timestamp de criação do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp da última atualização do registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "401": {
+                "description": "Credenciais inválidas"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": " * @OA\\SecurityScheme(\n * securityScheme=\"sanctum\",\n * type=\"http\",\n * scheme=\"bearer\",\n * bearerFormat=\"Sanctum\"\n * )\n ",
+                "bearerFormat": "Sanctum",
+                "scheme": "bearer"
             }
         }
     },
@@ -1909,24 +2472,24 @@
             "description": "Gerencia as avaliações feitas pelas empresas"
         },
         {
-            "name": "Catálogos",
-            "description": "Gerencia o catálogo das empresas"
+            "name": "Empresa",
+            "description": "Operações relacionadas a empresas"
+        },
+        {
+            "name": "Pagamentos",
+            "description": "Gerencia as informações de pagamentos"
+        },
+        {
+            "name": "Projetos",
+            "description": "Gerencia os projetos das empresas"
         },
         {
             "name": "Autenticação",
             "description": "Autenticação"
         },
         {
-            "name": "Empresa",
-            "description": "Empresa"
-        },
-        {
             "name": "Gamificação",
             "description": "Gamificação"
-        },
-        {
-            "name": "Pagamentos",
-            "description": "Pagamentos"
         },
         {
             "name": "Pedido",

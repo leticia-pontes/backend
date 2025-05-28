@@ -26,4 +26,7 @@ use OpenApi\Annotations as OA;
  *     }
  * )
  */
-class PerfilSchema {}
+class PerfilSchema
+{
+
+}

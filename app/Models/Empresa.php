@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Empresa extends Model
+class Empresa extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable, HasApiTokens;
 
     // Define o nome da tabela no banco de dados
     protected $table = 'empresas';
@@ -29,6 +31,11 @@ class Empresa extends Model
         'data_cadastro',
     ];
 
+    public function getAuthPassword()
+    {
+        return $this->senha;
+    }
+
     // Define os campos que devem ser ocultados ao serializar o modelo para arrays/JSON (ex: senha)
     protected $hidden = [
         'senha',
@@ -37,10 +44,16 @@ class Empresa extends Model
     // Define os atributos que devem ser convertidos para tipos nativos do PHP
     protected $casts = [
         'data_cadastro' => 'datetime',
+        'redes_sociais' => 'json',
     ];
 
     // Como já estamos usando 'data_cadastro' e não 'created_at'/'updated_at', desabilitamos os timestamps padrão do Laravel
     public $timestamps = false;
+
+    public function tipoPerfil()
+    {
+        return $this->belongsTo(TipoPerfil::class, 'id_tipo_perfil', 'id_tipo_perfil');
+    }
 
     // Relacionamento com Perfil (1:1)
     public function perfil()
@@ -79,7 +92,7 @@ class Empresa extends Model
     }
 
     // Relacionamento com Projeto (1:N)
-    public function catalogos()
+    public function projetos()
     {
         return $this->hasMany(Projeto::class, 'id_empresa', 'id_empresa');
     }
