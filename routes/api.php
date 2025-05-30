@@ -1,15 +1,16 @@
 <?php
 
+// Falta seeders de perfil_nicho e perfil_tecnologia e os controllers
+
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AvaliacaoController;
 use App\Http\Controllers\Api\EmpresaController;
-use App\Http\Controllers\Api\PlanoController;
+use App\Http\Controllers\Api\GamificacaoController;
 use App\Http\Controllers\Api\PerfilController;
 use App\Http\Controllers\Api\PedidoController;
 use App\Http\Controllers\Api\PedidoStatusController;
 use App\Http\Controllers\Api\PagamentoController;
 use App\Http\Controllers\Api\ProjetoController;
-use App\Http\Controllers\Api\AvaliacaoController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\GamificacaoController;
 use Illuminate\Support\Facades\Route;
 
 // ---

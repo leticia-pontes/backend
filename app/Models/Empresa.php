@@ -29,6 +29,8 @@ class Empresa extends Authenticatable
         'telefone',
         'endereco',
         'data_cadastro',
+        'nivel',
+        'pontos',
     ];
 
     public function getAuthPassword()
@@ -130,6 +132,8 @@ class Empresa extends Authenticatable
     // Relacionamento com Empresa_Distintivo (M:N)
     public function distintivos()
     {
-        return $this->belongsToMany(GamificacaoDistintivo::class, 'empresa_distintivo', 'id_empresa', 'id_distintivo');
+        return $this->belongsToMany(Distintivo::class, 'empresa_distintivo', 'empresa_id', 'distintivo_id')
+                    ->withPivot('data_conquista')
+                    ->withTimestamps();
     }
 }

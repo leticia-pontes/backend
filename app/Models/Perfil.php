@@ -4,18 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Perfil extends Model
 {
     use HasFactory;
 
-    // Define o nome da tabela no banco de dados
     protected $table = 'perfis';
-
-    // Define a chave primária da tabela
     protected $primaryKey = 'id_perfil';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    // Define os campos que podem ser preenchidos em massa
     protected $fillable = [
         'foto',
         'biografia',
@@ -25,23 +25,31 @@ class Perfil extends Model
         'id_tipo_perfil',
     ];
 
-    // Define os atributos que devem ser convertidos para tipos nativos do PHP
     protected $casts = [
-        // 'foto' => 'string', // Se mudar para armazenar URL da imagem
+        'redes_sociais' => 'array',
     ];
 
-    // Desabilita os timestamps padrão do Laravel (created_at, updated_at)
     public $timestamps = false;
 
-    // Relacionamento com Empresa (1:1) - Um perfil pertence a uma empresa
-    public function empresa()
+    public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
-    // Relacionamento com TipoPerfil (N:1) - Um perfil tem um tipo de perfil
-    public function tipoPerfil()
+    public function tipoPerfil(): BelongsTo
     {
         return $this->belongsTo(TipoPerfil::class, 'id_tipo_perfil', 'id_tipo_perfil');
+    }
+
+    // Relacionamento Many-to-Many com Nichos
+    public function nichos(): BelongsToMany
+    {
+        return $this->belongsToMany(Nicho::class, 'perfil_nicho', 'perfil_id', 'nicho_id');
+    }
+
+    // Relacionamento Many-to-Many com Tecnologias
+    public function tecnologias(): BelongsToMany
+    {
+        return $this->belongsToMany(Tecnologia::class, 'perfil_tecnologia', 'perfil_id', 'tecnologia_id');
     }
 }

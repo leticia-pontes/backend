@@ -6,11 +6,23 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(
- *     title="API backend",
- *     version="1.0.0",
- *     description="Documentação da API"
+ * version="1.0.0",
+ * title="API (backend)",
+ * description="API para gerenciamento de pedidos, incluindo funcionalidades de gamificação."
+ * )
+ *
+ * @OA\SecurityScheme(
+ * securityScheme="bearerAuth",
+ * type="http",
+ * scheme="bearer",
+ * bearerFormat="JWT"
  * )
  */
 class OpenApiInfo
 {
 }
+
+// @OA\Server(
+// url=L5_SWAGGER_CONST_HOST,
+// description="Servidor da API"
+// )

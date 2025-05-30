@@ -84,7 +84,11 @@ class GamificacaoController extends Controller
     public function distintivos()
     {
         $empresa = auth()->user();
-        $distintivos = $empresa->distintivos()->get();
+        if (!$empresa) {
+            return response()->json(['message' => 'Não autenticado'], 401);
+        }
+
+        $distintivos = $empresa->distintivos()->get(['titulo', 'descricao', 'icone']);
         return response()->json($distintivos);
     }
 }

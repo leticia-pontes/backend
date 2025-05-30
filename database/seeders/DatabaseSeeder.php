@@ -13,12 +13,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             EmpresaSeeder::class,
+            DistintivoSeeder::class,
             TipoPerfilSeeder::class,
             NichoSeeder::class,
             TecnologiaSeeder::class,
             PerfilSeeder::class,
-            EmpresaNichoSeeder::class,
-            EmpresaTecnologiaSeeder::class,
             SeguidorSeeder::class,
             PlanoSeeder::class,
             ProjetoSeeder::class,
@@ -27,6 +26,9 @@ class DatabaseSeeder extends Seeder
             EmpresaPlanoSeeder::class,
             PagamentoSeeder::class,
             AvaliacaoSeeder::class,
+            PerfilNichoSeeder::class,
+            PerfilTecnologiaSeeder::class,
+            ConfiguracaoGamificacaoSeeder::class
         ]);
     }
 }

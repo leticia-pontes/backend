@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "API backend",
-        "description": "Documentação da API",
+        "title": "API (backend)",
+        "description": "API para gerenciamento de pedidos, incluindo funcionalidades de gamificação.",
         "version": "1.0.0"
     },
     "paths": {
@@ -1097,72 +1097,149 @@
         "/api/pedidos": {
             "get": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos"
                 ],
-                "summary": "Lista todos os pedidos do usuário autenticado.",
-                "operationId": "e848822b988b4e4cf96af0f71f29581c",
+                "summary": "Obtém a lista de todos os pedidos",
+                "description": "Retorna uma lista paginada de pedidos com seus contratantes, desenvolvedores e status atuais.",
+                "operationId": "getPedidosList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número da página para paginação",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Lista de pedidos",
+                        "description": "Operação bem-sucedida",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "pedidos": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Pedido"
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id_pedido": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "titulo": {
+                                                "type": "string",
+                                                "example": "Desenvolvimento de E-commerce"
+                                            },
+                                            "descricao": {
+                                                "type": "string",
+                                                "example": "Criar uma loja virtual completa."
+                                            },
+                                            "valor_estimado": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 5000
+                                            },
+                                            "data_prazo": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2025-12-31"
+                                            },
+                                            "data_pedido": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2025-05-20"
+                                            },
+                                            "current_status": {
+                                                "type": "string",
+                                                "example": "pendente"
+                                            },
+                                            "contratante": {
+                                                "type": "object",
+                                                "example": {
+                                                    "id_empresa": 1,
+                                                    "nome": "Empresa Contratante A"
+                                                }
+                                            },
+                                            "desenvolvedora": {
+                                                "type": "object",
+                                                "example": {
+                                                    "id_empresa": 2,
+                                                    "nome": "Empresa Desenvolvedora B"
+                                                }
                                             }
-                                        }
-                                    },
-                                    "type": "object"
+                                        },
+                                        "type": "object"
+                                    }
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             },
             "post": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos"
                 ],
-                "summary": "Cria um novo pedido.",
-                "operationId": "36884e796fd6f470919017f7ca543cd0",
+                "summary": "Cria um novo pedido",
+                "description": "Cria um novo pedido e associa distintivos à empresa contratante.",
+                "operationId": "createPedido",
                 "requestBody": {
+                    "description": "Dados do pedido para criação",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "data_pedido",
+                                    "titulo",
                                     "descricao",
-                                    "valor",
-                                    "prazo_entrega"
+                                    "valor_estimado",
+                                    "id_empresa_contratante"
                                 ],
                                 "properties": {
-                                    "data_pedido": {
+                                    "titulo": {
                                         "type": "string",
-                                        "format": "date",
-                                        "example": "2025-05-22"
+                                        "example": "Desenvolvimento de Landing Page"
                                     },
                                     "descricao": {
                                         "type": "string",
-                                        "example": "Desenvolvimento de site"
+                                        "example": "Criar uma landing page para nova campanha de marketing."
                                     },
-                                    "valor": {
+                                    "valor_estimado": {
                                         "type": "number",
                                         "format": "float",
                                         "example": 1500
                                     },
-                                    "prazo_entrega": {
+                                    "data_prazo": {
                                         "type": "string",
                                         "format": "date",
-                                        "example": "2025-06-22"
+                                        "example": "2025-06-30",
+                                        "nullable": true
+                                    },
+                                    "id_empresa_contratante": {
+                                        "description": "ID da empresa que está contratando o pedido.",
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1176,18 +1253,35 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Pedido"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido criado com sucesso!"
+                                        },
+                                        "pedido": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_pedido": 1,
+                                                "titulo": "Desenvolvimento de Landing Page",
+                                                "status": "pendente"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
                     "422": {
-                        "description": "Validação falhou"
+                        "description": "Erro de validação"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
@@ -1195,10 +1289,11 @@
         "/api/pedidos/{id}": {
             "get": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos"
                 ],
-                "summary": "Mostra um pedido específico.",
-                "operationId": "41f9fd012dcc6f1915be1a7372c7d87b",
+                "summary": "Obtém detalhes de um pedido específico",
+                "description": "Retorna os detalhes de um pedido pelo seu ID.",
+                "operationId": "getPedidoById",
                 "parameters": [
                     {
                         "name": "id",
@@ -1206,72 +1301,132 @@
                         "description": "ID do pedido",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Detalhes do pedido",
+                        "description": "Operação bem-sucedida",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Pedido"
+                                    "properties": {
+                                        "id_pedido": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "titulo": {
+                                            "type": "string",
+                                            "example": "Desenvolvimento de E-commerce"
+                                        },
+                                        "descricao": {
+                                            "type": "string",
+                                            "example": "Criar uma loja virtual completa."
+                                        },
+                                        "valor_estimado": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 5000
+                                        },
+                                        "data_prazo": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2025-12-31"
+                                        },
+                                        "data_pedido": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2025-05-20"
+                                        },
+                                        "current_status": {
+                                            "type": "string",
+                                            "example": "em_andamento"
+                                        },
+                                        "contratante": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_empresa": 1,
+                                                "nome": "Empresa Contratante A"
+                                            }
+                                        },
+                                        "desenvolvedora": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_empresa": 2,
+                                                "nome": "Empresa Desenvolvedora B"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "403": {
-                        "description": "Acesso negado"
-                    },
                     "404": {
                         "description": "Pedido não encontrado"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             },
             "put": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos"
                 ],
-                "summary": "Atualiza um pedido.",
-                "operationId": "c552afd071c0184bb7ded11c11c3bb41",
+                "summary": "Atualiza um pedido existente",
+                "description": "Atualiza os dados de um pedido específico. Use PATCH para atualização parcial.",
+                "operationId": "updatePedido",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID do pedido",
+                        "description": "ID do pedido a ser atualizado",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "requestBody": {
+                    "description": "Dados do pedido para atualização",
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "descricao": {
-                                        "type": "string"
-                                    },
-                                    "valor": {
-                                        "type": "number",
-                                        "format": "float"
-                                    },
-                                    "prazo_entrega": {
+                                    "titulo": {
                                         "type": "string",
-                                        "format": "date"
+                                        "example": "Novo Título do Pedido"
                                     },
-                                    "progresso": {
-                                        "type": "string"
+                                    "descricao": {
+                                        "type": "string",
+                                        "example": "Nova descrição do projeto atualizado."
                                     },
-                                    "comentarios": {
-                                        "type": "string"
+                                    "valor_estimado": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 2000
+                                    },
+                                    "data_prazo": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-01-15",
+                                        "nullable": true
+                                    },
+                                    "id_empresa_desenvolvedora": {
+                                        "description": "ID da empresa desenvolvedora atribuída.",
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -1281,75 +1436,151 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Pedido atualizado",
+                        "description": "Pedido atualizado com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Pedido"
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido atualizado com sucesso!"
+                                        },
+                                        "pedido": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_pedido": 1,
+                                                "titulo": "Novo Título do Pedido"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
-                    "403": {
-                        "description": "Sem permissão para editar esse pedido"
-                    },
                     "404": {
                         "description": "Pedido não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Remove um pedido",
+                "description": "Deleta um pedido específico do armazenamento.",
+                "operationId": "deletePedido",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido a ser deletado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Pedido deletado com sucesso (No Content)"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
                     }
                 ]
             }
         },
         "/api/pedidos/{id}/aceitar": {
-            "post": {
+            "patch": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos - Status"
                 ],
-                "summary": "Aceita um pedido.",
-                "operationId": "6c26d0cd6f03df326602470b18487aa6",
+                "summary": "Aceita um pedido",
+                "description": "Marca um pedido como 'aceito' pela empresa desenvolvedora autenticada. Só pode ser aceito se o status atual for 'pendente'.",
+                "operationId": "aceitarPedido",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID do pedido",
+                        "description": "ID do pedido a ser aceito",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Pedido aceito com sucesso"
+                        "description": "Pedido aceito com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido aceito com sucesso!"
+                                        },
+                                        "pedido": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_pedido": 1,
+                                                "status": "aceito",
+                                                "id_empresa_desenvolvedora": 2
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Pedido já foi aceito"
+                        "description": "Pedido não pode ser aceito neste status ou não tem desenvolvedora atribuída."
                     },
-                    "403": {
-                        "description": "Sem permissão para aceitar"
+                    "401": {
+                        "description": "Não autenticado ou empresa desenvolvedora não encontrada."
                     },
                     "404": {
-                        "description": "Pedido não encontrado"
+                        "description": "Pedido não encontrado."
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
         },
-        "/api/pedidos/{id}/iniciar": {
-            "post": {
+        "/api/pedidos/{id}/em-andamento": {
+            "patch": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos - Status"
                 ],
-                "summary": "Inicia o desenvolvimento de um pedido.",
-                "operationId": "2bdb22af94790d019b4422aba68939b2",
+                "summary": "Marca um pedido como em andamento",
+                "description": "Marca um pedido como 'em_andamento'. A transição é permitida a partir de 'aceito' ou 'aguardando'.",
+                "operationId": "emAndamentoPedido",
                 "parameters": [
                     {
                         "name": "id",
@@ -1357,19 +1588,40 @@
                         "description": "ID do pedido",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Pedido iniciado com sucesso"
+                        "description": "Pedido marcado como 'em andamento' com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido marcado como 'em andamento' com sucesso!"
+                                        },
+                                        "pedido": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_pedido": 1,
+                                                "status": "em_andamento"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Pedido já está em andamento"
+                        "description": "Pedido não pode ir para 'em andamento' neste status ou não tem desenvolvedora atribuída."
                     },
-                    "403": {
-                        "description": "Sem permissão para iniciar"
+                    "401": {
+                        "description": "Não autenticado"
                     },
                     "404": {
                         "description": "Pedido não encontrado"
@@ -1377,18 +1629,19 @@
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
         },
-        "/api/pedidos/{id}/cancelar": {
-            "post": {
+        "/api/pedidos/{id}/aguardar": {
+            "patch": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos - Status"
                 ],
-                "summary": "Cancela um pedido.",
-                "operationId": "59b339e29af50124ecf4d10100bffd8a",
+                "summary": "Marca um pedido como aguardando",
+                "description": "Marca um pedido como 'aguardando'. A transição é permitida a partir de 'em_andamento'.",
+                "operationId": "aguardarPedido",
                 "parameters": [
                     {
                         "name": "id",
@@ -1396,19 +1649,40 @@
                         "description": "ID do pedido",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Pedido cancelado com sucesso"
+                        "description": "Pedido marcado como 'aguardando' com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido marcado como 'aguardando' com sucesso!"
+                                        },
+                                        "pedido": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_pedido": 1,
+                                                "status": "aguardando"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Pedido já finalizado"
+                        "description": "Pedido não pode ser marcado como 'aguardando' neste status ou não tem desenvolvedora atribuída."
                     },
-                    "403": {
-                        "description": "Sem permissão para cancelar"
+                    "401": {
+                        "description": "Não autenticado"
                     },
                     "404": {
                         "description": "Pedido não encontrado"
@@ -1416,46 +1690,139 @@
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
                     }
                 ]
             }
         },
         "/api/pedidos/{id}/concluir": {
-            "post": {
+            "patch": {
                 "tags": [
-                    "Pedido"
+                    "Pedidos - Status"
                 ],
-                "summary": "Conclui um pedido.",
-                "operationId": "c911e1474f9e0dee2115f613f9fedd15",
+                "summary": "Conclui um pedido",
+                "description": "Marca um pedido como 'concluido' e concede pontos e distintivos à empresa desenvolvedora. A transição é permitida a partir de 'em_andamento' ou 'aguardando'.",
+                "operationId": "concluirPedido",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID do pedido",
+                        "description": "ID do pedido a ser concluído",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "format": "int64"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Pedido concluído com sucesso"
+                        "description": "Pedido concluído com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido concluído com sucesso! Distintivos conquistados!"
+                                        },
+                                        "new_badges": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "example": [
+                                                "Conquistador de Projetos"
+                                            ]
+                                        },
+                                        "empresa_pontos": {
+                                            "type": "integer",
+                                            "example": 150
+                                        },
+                                        "empresa_nivel": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Pedido já finalizado"
+                        "description": "Pedido não pode ser concluído neste status ou não tem desenvolvedora atribuída."
                     },
-                    "403": {
-                        "description": "Sem permissão para concluir"
+                    "401": {
+                        "description": "Não autenticado"
                     },
                     "404": {
-                        "description": "Pedido não encontrado"
+                        "description": "Pedido não encontrado ou empresa desenvolvedora não encontrada."
                     }
                 },
                 "security": [
                     {
-                        "sanctum": []
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/pedidos/{id}/cancelar": {
+            "patch": {
+                "tags": [
+                    "Pedidos - Status"
+                ],
+                "summary": "Cancela um pedido",
+                "description": "Marca um pedido como 'cancelado' e pode remover pontos do desenvolvedor. Não pode ser cancelado se já estiver 'concluido' ou 'cancelado'.",
+                "operationId": "cancelarPedido",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do pedido a ser cancelado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pedido cancelado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Pedido cancelado com sucesso!"
+                                        },
+                                        "pedido": {
+                                            "type": "object",
+                                            "example": {
+                                                "id_pedido": 1,
+                                                "status": "cancelado"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Pedido não pode ser cancelado neste status."
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
+                    "404": {
+                        "description": "Pedido não encontrado."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
                     }
                 ]
             }
@@ -1499,23 +1866,41 @@
                                 ],
                                 "properties": {
                                     "foto": {
+                                        "description": "Arquivo de imagem para a foto do perfil.",
                                         "type": "string",
                                         "format": "binary"
                                     },
                                     "biografia": {
+                                        "description": "Biografia do perfil.",
                                         "type": "string"
                                     },
-                                    "nicho_mercado": {
-                                        "type": "string"
+                                    "id_empempresa": {
+                                        "description": "ID da empresa associada ao perfil.",
+                                        "type": "integer"
                                     },
-                                    "tecnologia": {
-                                        "type": "string"
+                                    "id_tipo_perfil": {
+                                        "description": "ID do tipo de perfil.",
+                                        "type": "integer",
+                                        "nullable": true
                                     },
                                     "redes_sociais": {
-                                        "type": "string"
+                                        "description": "Array JSON de URLs de redes sociais.",
+                                        "type": "string",
+                                        "format": "json"
                                     },
-                                    "id_empresa": {
-                                        "type": "integer"
+                                    "nichos": {
+                                        "description": "Array de IDs de nichos para associar ao perfil.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "tecnologias": {
+                                        "description": "Array de IDs de tecnologias para associar ao perfil.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1533,6 +1918,9 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
                     }
                 }
             }
@@ -1550,6 +1938,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
+                            "description": "ID do perfil",
                             "type": "integer"
                         }
                     }
@@ -1564,6 +1953,9 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Perfil não encontrado"
                     }
                 }
             },
@@ -1587,23 +1979,51 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
+                                    "foto": {
+                                        "description": "Novo arquivo de imagem para a foto do perfil.",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
                                     "biografia": {
-                                        "type": "string"
-                                    },
-                                    "nicho_mercado": {
-                                        "type": "string"
-                                    },
-                                    "tecnologia": {
-                                        "type": "string"
-                                    },
-                                    "redes_sociais": {
-                                        "type": "string"
+                                        "description": "Nova biografia do perfil.",
+                                        "type": "string",
+                                        "nullable": true
                                     },
                                     "id_empresa": {
-                                        "type": "integer"
+                                        "description": "Novo ID da empresa associada ao perfil.",
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "id_tipo_perfil": {
+                                        "description": "Novo ID do tipo de perfil.",
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "redes_sociais": {
+                                        "description": "Novo array JSON de URLs de redes sociais.",
+                                        "type": "string",
+                                        "format": "json",
+                                        "nullable": true
+                                    },
+                                    "nichos": {
+                                        "description": "Array de IDs de nichos para associar/sincronizar ao perfil.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "nullable": true
+                                    },
+                                    "tecnologias": {
+                                        "description": "Array de IDs de tecnologias para associar/sincronizar ao perfil.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -1649,6 +2069,9 @@
                 "responses": {
                     "204": {
                         "description": "Perfil removido com sucesso"
+                    },
+                    "404": {
+                        "description": "Perfil não encontrado"
                     }
                 }
             }
@@ -2463,6 +2886,11 @@
                 "description": " * @OA\\SecurityScheme(\n * securityScheme=\"sanctum\",\n * type=\"http\",\n * scheme=\"bearer\",\n * bearerFormat=\"Sanctum\"\n * )\n ",
                 "bearerFormat": "Sanctum",
                 "scheme": "bearer"
+            },
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     },
@@ -2492,8 +2920,12 @@
             "description": "Gamificação"
         },
         {
-            "name": "Pedido",
-            "description": "Pedido"
+            "name": "Pedidos",
+            "description": "Pedidos"
+        },
+        {
+            "name": "Pedidos - Status",
+            "description": "Pedidos - Status"
         },
         {
             "name": "Perfil",
