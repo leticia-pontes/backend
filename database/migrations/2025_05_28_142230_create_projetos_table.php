@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('projetos', function (Blueprint $table) {
-            $table->increments('id_projeto'); // Chave primária
+            $table->id('id_projeto'); // Chave primária
             $table->string('nome_projeto', 200)->notNullable();
             $table->text('descricao')->nullable(); // Descrição pode ser opcional
             $table->date('data_inicio')->nullable(); // Pode ser nulo se não houver data de início definida
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('url_projeto', 255)->nullable(); // Link para o projeto em produção/repositório
             $table->string('imagem_destaque_url', 255)->nullable(); // URL de uma imagem representativa do projeto
 
-            $table->unsignedInteger('id_empresa'); // Chave estrangeira para a empresa proprietária do projeto
+            $table->unsignedBigInteger('id_empresa'); // Chave estrangeira para a empresa proprietária do projeto
             $table->foreign('id_empresa')->references('id_empresa')->on('empresas')->onDelete('cascade');
 
             // Adicionamos timestamps para rastrear criação e atualização do registro do projeto

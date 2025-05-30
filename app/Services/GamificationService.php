@@ -90,20 +90,20 @@ class GamificationService
 
             switch ($distintivo->id_distintivo) {
                 case $ID_AVALIADOR_INICIANTE:
-                    if ($empresa->avaliacoes()->count() >= 1) {
+                    if ($empresa->avaliacoesRecebidas()->count() >= 1) {
                         $awarded = true;
                     }
                     break;
 
                 case $ID_AVALIADOR_EXPERIENTE:
-                    if ($empresa->avaliacoes()->where('nota', '>=', 4)->count() >= 5) {
+                    if ($empresa->avaliacoesRecebidas()->where('nota', '>=', 4)->count() >= 5) {
                         $awarded = true;
                     }
                     break;
 
                 case $ID_CONQUISTADOR_PROJETOS:
                     // Verifica projetos com status 'concluido' no histórico
-                    if ($empresa->pedidosDesenvolvidos()->whereHas('statusHistorico', function ($query) {
+                    if ($empresa->pedidosPrestados()->whereHas('statusHistorico', function ($query) {
                         $query->where('status', PedidoStatusEnum::Concluido->value);
                     })->count() >= 1) {
                         $awarded = true;
@@ -125,14 +125,14 @@ class GamificationService
 
                 case $ID_PRIMEIRO_PEDIDO:
                     // Distintivo concedido se a empresa contratante realizou 1 pedido
-                    if ($empresa->pedidosContratados()->count() >= 1) {
+                    if ($empresa->pedidosSolicitados()->count() >= 1) {
                         $awarded = true;
                     }
                     break;
 
                 case $ID_GIGANTE_AVALIACOES:
                     // Distintivo concedido se a empresa realizou 100 ou mais avaliações
-                    if ($empresa->avaliacoes()->count() >= 100) {
+                    if ($empresa->avaliacoesFeitas()->count() >= 100) {
                         $awarded = true;
                     }
                     break;

@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('empresa_distintivo', function (Blueprint $table) {
-            $table->unsignedInteger('empresa_id');
+            $table->unsignedBigInteger('empresa_id');
+            $table->unsignedBigInteger('distintivo_id');
             $table->foreign('empresa_id')->references('id_empresa')->on('empresas')->onDelete('cascade');
-            $table->foreignId('distintivo_id')->constrained('distintivos')->onDelete('cascade');
+            $table->foreign('distintivo_id')->references('id_distintivo')->on('distintivos')->onDelete('cascade');
             $table->timestamp('data_conquista')->nullable();
             $table->primary(['empresa_id', 'distintivo_id']);
             $table->timestamps();

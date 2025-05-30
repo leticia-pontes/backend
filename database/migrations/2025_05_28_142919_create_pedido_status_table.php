@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pedido_status', function (Blueprint $table) {
-            $table->increments('id_pedido_status'); // Primary Key AUTO_INCREMENT
-            $table->unsignedInteger('id_pedido'); // Chave estrangeira para o Pedido
+            $table->id('id_pedido_status'); // Primary Key AUTO_INCREMENT
+            $table->unsignedBigInteger('id_pedido'); // Chave estrangeira para o Pedido
             $table->string('status', 50)->notNullable(); // O status atual (ex: 'Pendente', 'Aceito', 'Em Andamento', 'Concluído', 'Cancelado')
             $table->text('observacao')->nullable(); // Alguma observação sobre a mudança de status
             $table->timestamp('data_status')->useCurrent(); // Data e hora da mudança de status

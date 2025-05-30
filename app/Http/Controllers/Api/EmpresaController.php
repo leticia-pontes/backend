@@ -144,10 +144,10 @@ class EmpresaController extends Controller
 
         $validatedData = $request->validate([
             'nome' => 'sometimes|required|string|max:255',
-            'cnpj' => 'sometimes|required|string|max:20|unique:empresas,cnpj,' . $id . ',id',
+            'cnpj' => 'sometimes|required|string|max:20|unique:empresas,cnpj,' . $id . ',id_empresa',
             'perfil' => 'nullable|string|max:255',
             'seguidores' => 'nullable|integer',
-            'email' => 'sometimes|required|email|unique:empresas,email,' . $id . ',id',
+            'email' => 'sometimes|required|email|unique:empresas,email,' . $id . ',id_empresa',
             'senha' => 'sometimes|required|string|min:6',
             'telefone' => 'nullable|string|max:20',
             'endereco' => 'nullable|string|max:255',

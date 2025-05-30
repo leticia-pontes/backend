@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('empresa_planos', function (Blueprint $table) {
-            $table->increments('id_empresa_plano'); // Chave primária
-            $table->unsignedInteger('id_empresa');
-            $table->unsignedInteger('id_plano');
+            $table->id('id_empresa_plano'); // Chave primária
+            $table->unsignedBigInteger('id_empresa');
+            $table->unsignedBigInteger('id_plano');
             $table->date('data_inicio')->notNullable();
             $table->date('data_fim')->nullable(); // Pode ser NULL para planos contínuos ou sem data de término definida
             $table->boolean('ativo')->default(true)->notNullable(); // Indica se a assinatura está ativa

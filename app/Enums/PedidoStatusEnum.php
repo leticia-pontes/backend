@@ -4,10 +4,10 @@ namespace App\Enums;
 
 enum PedidoStatusEnum: string
 {
-    case Pendente = 'pendente';
-    case Aceito = 'aceito';
-    case EmAndamento = 'em_andamento';
-    case Aguardando = 'aguardando';
-    case Concluido = 'concluido';
-    case Cancelado = 'cancelado';
+    case Pendente = 'Pendente';
+    case Aceito = 'Aceito';
+    case EmAndamento = 'Em Andamento';
+    case Aguardando = 'Aguardando';
+    case Concluido = 'Concluido';
+    case Cancelado = 'Cancelado';
 }

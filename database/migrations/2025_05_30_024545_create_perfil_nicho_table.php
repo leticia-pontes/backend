@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('perfil_nicho', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('perfil_id');
-            $table->unsignedInteger('nicho_id');
+            $table->unsignedBigInteger('perfil_id');
+            $table->unsignedBigInteger('nicho_id');
 
             $table->timestamps();
 

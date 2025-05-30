@@ -113,7 +113,7 @@ class PagamentoController extends Controller
             'data_pagamento' => 'required|date',
             'metodo_pagamento' => 'required|string|max:50',
             'status' => 'required|string|max:50',
-            'id_pedido' => 'required|integer|exists:pedidos,id',
+            'id_pedido' => 'required|integer|exists:pedidos,id_pedido',
         ]);
 
         $pagamento = Pagamento::create($validated);
@@ -170,7 +170,7 @@ class PagamentoController extends Controller
             'data_pagamento' => 'sometimes|date',
             'metodo_pagamento' => 'sometimes|string|max:50',
             'status' => 'sometimes|string|max:50',
-            'id_pedido' => 'sometimes|integer|exists:pedidos,id',
+            'id_pedido' => 'sometimes|integer|exists:pedidos,id_pedido',
         ]);
 
         $pagamento->update($validated);

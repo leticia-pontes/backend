@@ -24,13 +24,13 @@ class AvaliacaoFactory extends Factory
     public function definition()
     {
         return [
-            // id_empresa_avaliador deve ser uma ID de uma Empresa existente
+            // id_empresa_avaliadora deve ser uma ID de uma Empresa existente
             // Usamos Empresa::factory() para criar uma empresa se uma não for explicitamente fornecida
-            'id_empresa_avaliador' => Empresa::factory(),
+            'id_empresa_avaliadora' => Empresa::factory(),
 
-            // id_empresa_avaliado deve ser uma ID de uma Empresa existente
+            // id_empresa_avaliada deve ser uma ID de uma Empresa existente
             // E é importante que não seja a mesma empresa que o avaliador
-            'id_empresa_avaliado' => Empresa::factory(),
+            'id_empresa_avaliada' => Empresa::factory(),
 
             'nota' => $this->faker->numberBetween(1, 5), // Nota entre 1 e 5
             'comentario' => $this->faker->paragraph,
@@ -57,8 +57,8 @@ class AvaliacaoFactory extends Factory
             }
 
             return [
-                'id_empresa_avaliador' => $avaliador->id_empresa,
-                'id_empresa_avaliado' => $avaliado->id_empresa,
+                'id_empresa_avaliadora' => $avaliador->id_empresa,
+                'id_empresa_avaliada' => $avaliado->id_empresa,
             ];
         });
     }
@@ -74,9 +74,9 @@ class AvaliacaoFactory extends Factory
             // Verifica se as IDs de avaliador e avaliado são as mesmas.
             // Se sim, cria um novo avaliado para garantir que sejam diferentes.
             // Isso é um fallback se for usado sem 'forUniqueCompanies'.
-            if (isset($avaliacao->id_empresa_avaliador) && isset($avaliacao->id_empresa_avaliado) &&
-                $avaliacao->id_empresa_avaliador === $avaliacao->id_empresa_avaliado) {
-                $avaliacao->id_empresa_avaliado = Empresa::factory()->create()->id_empresa;
+            if (isset($avaliacao->id_empresa_avaliadora) && isset($avaliacao->id_empresa_avaliada) &&
+                $avaliacao->id_empresa_avaliadora === $avaliacao->id_empresa_avaliada) {
+                $avaliacao->id_empresa_avaliada = Empresa::factory()->create()->id_empresa;
             }
         });
     }

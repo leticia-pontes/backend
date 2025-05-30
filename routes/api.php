@@ -56,8 +56,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Outros recursos da API que exigem autenticação
     Route::apiResource('planos', PlanoController::class);
     Route::apiResource('pedidos', PedidoController::class);
-    Route::apiResource('pedido-status', PedidoStatusController::class);
-    Route::apiResource('gamificacoes', GamificacaoController::class);
+    Route::apiResource('gamificacao', GamificacaoController::class);
+
+    // Rotas de mudança de status de pedidos
+    Route::prefix('pedidos')->controller(PedidoController::class)->group(function () {
+        Route::patch('{pedido}/aceitar', 'aceitar');
+        Route::patch('{pedido}/em-andamento', 'emAndamento');
+        Route::patch('{pedido}/aguardar', 'aguardar');
+        Route::patch('{pedido}/concluir', 'concluir');
+        Route::patch('{pedido}/cancelar', 'cancelar');
+    });
+
 });
 
 

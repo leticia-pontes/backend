@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('seguidor', function (Blueprint $table) {
-            $table->unsignedInteger('id_empresa_seguidor'); // A empresa que está seguindo
-            $table->unsignedInteger('id_empresa_seguido');  // A empresa que está sendo seguida
+            $table->unsignedBigInteger('id_empresa_seguidor'); // A empresa que está seguindo
+            $table->unsignedBigInteger('id_empresa_seguido');  // A empresa que está sendo seguida
             $table->dateTime('data_seguida')->useCurrent(); // Quando o "seguir" aconteceu
 
             // Chave primária composta para evitar duplicações

@@ -38,17 +38,16 @@ class AvaliacaoSeeder extends Seeder
                 $empresaAvaliado = $outrasEmpresas->random();
             }
 
-            // Garante que não haja avaliações duplicadas (se o unique na migration estiver ativo)
-            // Se o unique estiver ativo, descomentar
-            // if (Avaliacao::where('id_empresa_avaliador', $empresaAvaliador->id_empresa)
-            //             ->where('id_empresa_avaliado', $empresaAvaliado->id_empresa)
-            //             ->exists()) {
-            //     continue; // Já existe uma avaliação entre essas duas empresas
-            // }
+            // Garante que não haja avaliações duplicadas
+            if (Avaliacao::where('id_empresa_avaliadora', $empresaAvaliador->id_empresa)
+                        ->where('id_empresa_avaliada', $empresaAvaliado->id_empresa)
+                        ->exists()) {
+                continue; // Já existe uma avaliação entre essas duas empresas
+            }
 
             Avaliacao::create([
-                'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-                'id_empresa_avaliado' => $empresaAvaliado->id_empresa,
+                'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+                'id_empresa_avaliada' => $empresaAvaliado->id_empresa,
                 'nota' => $faker->numberBetween(1, 5), // Nota de 1 a 5
                 'comentario' => $faker->boolean(80) ? $faker->paragraph(rand(1, 3)) : null, // 80% de chance de ter comentário
                 'data_avaliacao' => $faker->dateTimeBetween('-6 months', 'now'),

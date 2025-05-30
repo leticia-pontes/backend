@@ -23,9 +23,9 @@ class Nicho extends Model
     // Desabilita os timestamps padrão do Laravel (created_at, updated_at)
     public $timestamps = false;
 
-    // Relacionamento com Empresa (M:N) - Um nicho pode ter muitas empresas, e uma empresa pode ter muitos nichos
-    public function empresas()
+    // Relacionamento com Perfil (M:N) - Um nicho pode ter muitos perfis, e um perfil pode ter muitos nichos
+    public function perfis()
     {
-        return $this->belongsToMany(Empresa::class, 'empresa_nicho', 'id_nicho', 'id_empresa');
+        return $this->belongsToMany(Empresa::class, 'perfil_nicho', 'id_nicho', 'id_perfil');
     }
 }

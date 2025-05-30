@@ -21,3 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+
+# Arquivo para acompanhar testes dos controllers
+todo.md

@@ -74,75 +74,78 @@ class AvaliacaoController extends Controller
 
     /**
      * @OA\Post(
-     * path="/api/avaliacoes",
-     * tags={"Avaliações"},
-     * summary="Criar uma nova avaliação",
-     * security={{"sanctum": {}}},
-     * @OA\RequestBody(
-     * required=true,
-     * @OA\JsonContent(
-     * required={"nota", "comentario", "id_empresa"},
-     * @OA\Property(property="nota", type="integer", example=5, description="Nota da avaliação (1-5)"),
-     * @OA\Property(property="comentario", type="string", example="Empresa excelente, serviço de qualidade!"),
-     * @OA\Property(property="id_empresa", type="integer", example=1, description="ID da empresa que está sendo avaliada")
-     * )
-     * ),
-     * @OA\Response(
-     * response=201,
-     * description="Avaliação criada com sucesso",
-     * @OA\JsonContent(ref="#/components/schemas/Avaliacao")
-     * ),
-     * @OA\Response(
-     * response=401,
-     * description="Não autenticado"
-     * ),
-     * @OA\Response(
-     * response=422,
-     * description="Erro de validação",
-     * @OA\JsonContent(
-     * @OA\Property(property="message", type="string"),
-     * @OA\Property(property="errors", type="object")
-     * )
-     * )
+     *     path="/api/avaliacoes",
+     *     tags={"Avaliações"},
+     *     summary="Criar uma nova avaliação",
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nota", "comentario", "id_empresa"},
+     *             @OA\Property(property="nota", type="integer", example=5, description="Nota da avaliação (1-5)"),
+     *             @OA\Property(property="comentario", type="string", example="Empresa excelente, serviço de qualidade!"),
+     *             @OA\Property(property="id_empresa", type="integer", example=1, description="ID da empresa que está sendo avaliada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Avaliação criada com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/Avaliacao")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Você não pode avaliar a si mesmo"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Não autenticado"
+     *     ),
+     *     @OA\Response(
+     *         response=409,
+     *         description="Avaliação já existente"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Erro de validação",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
      * )
      */
     public function store(Request $request)
     {
-        // 1. Obter o ID da empresa avaliadora (autenticada)
-        $empresaAvaliador = Auth::user(); // Pega o objeto Empresa autenticado
+        $empresaAvaliador = Auth::user();
         $idEmpresaAvaliador = $empresaAvaliador->id_empresa;
 
-        // 2. Validação dos dados de entrada
         $validatedData = $request->validate([
-            'id_empresa_avaliado' => 'required|exists:empresas,id_empresa', // Verifica se a empresa avaliada existe
+            'id_empresa' => 'required|exists:empresas,id_empresa',
             'nota' => 'required|integer|min:1|max:5',
             'comentario' => 'nullable|string|max:500',
         ]);
 
-        // 3. Verificação de auto-avaliação
-        if ($idEmpresaAvaliador === $validatedData['id_empresa_avaliado']) {
+        if ($idEmpresaAvaliador === $validatedData['id_empresa']) {
             return response()->json(['message' => 'Você não pode avaliar a si mesmo.'], 400);
         }
 
-        // 4. Verificação de avaliação duplicada (opcional, dependendo da sua regra de negócio)
-        $exists = Avaliacao::where('id_empresa_avaliador', $idEmpresaAvaliador)
-                           ->where('id_empresa_avaliado', $validatedData['id_empresa_avaliado'])
-                           ->exists();
+        $exists = Avaliacao::where('id_empresa_avaliadora', $idEmpresaAvaliador)
+                        ->where('id_empresa_avaliada', $validatedData['id_empresa'])
+                        ->exists();
 
         if ($exists) {
-            return response()->json(['message' => 'Você já avaliou esta empresa.'], 409); // 409 Conflict
+            return response()->json(['message' => 'Você já avaliou esta empresa.'], 409);
         }
 
-        // 5. Criar a avaliação
         $avaliacao = Avaliacao::create([
-            'id_empresa_avaliador' => $idEmpresaAvaliador,
-            'id_empresa_avaliado' => $validatedData['id_empresa_avaliado'],
+            'id_empresa_avaliadora' => $idEmpresaAvaliador,
+            'id_empresa_avaliada' => $validatedData['id_empresa'],
             'nota' => $validatedData['nota'],
             'comentario' => $validatedData['comentario'],
-            'data_avaliacao' => Carbon::now()->toDateString(), // Usa Carbon para garantir formato de data
+            'data_avaliacao' => Carbon::now()->toDateString(),
         ]);
 
-        return response()->json($avaliacao, 201); // Retorna a avaliação criada com status 201
+        return response()->json($avaliacao, 201);
     }
 
     /**

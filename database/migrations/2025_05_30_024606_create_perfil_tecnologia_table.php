@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('perfil_tecnologia', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('perfil_id');
-            $table->unsignedInteger('tecnologia_id');
+            $table->unsignedBigInteger('perfil_id');
+            $table->unsignedBigInteger('tecnologia_id');
 
             $table->timestamps();
 

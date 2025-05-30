@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tipo_perfis', function (Blueprint $table) {
-            $table->increments('id_tipo_perfil'); // Primary Key AUTO_INCREMENT
+            $table->id('id_tipo_perfil'); // Primary Key AUTO_INCREMENT
             $table->string('nome_tipo', 50)->unique()->notNullable(); // Nome único para o tipo de perfil
             // Não usaremos timestamps() aqui
         });

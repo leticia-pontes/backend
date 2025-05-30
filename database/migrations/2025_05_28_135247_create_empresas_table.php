@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('empresas', function (Blueprint $table) {
-            $table->increments('id_empresa'); // Primary Key AUTO_INCREMENT
+            $table->id('id_empresa'); // Cria um unsignedBigInteger auto increment
             $table->string('nome', 100)->notNullable();
             $table->string('cnpj', 14)->unique()->notNullable(); // CNPJ único
             $table->string('email', 100)->unique()->notNullable(); // Email único

@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-/**
- * @OA\Tag(
- * name="Projetos",
- * description="Gerencia os projetos das empresas"
- * )
- */
 class ProjetoController extends Controller
 {
     public function __construct()
@@ -24,158 +18,139 @@ class ProjetoController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/projetos",
-     * tags={"Projetos"},
-     * summary="Listar todos os projetos",
-     * @OA\Response(
-     * response=200,
-     * description="Lista de projetos",
-     * @OA\JsonContent(
-     * type="array",
-     * @OA\Items(ref="#/components/schemas/Projeto")
-     * )
-     * )
+     *     path="/api/projetos",
+     *     tags={"Projetos"},
+     *     summary="Listar todos os projetos",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de projetos",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Projeto"))
+     *     )
      * )
      */
     public function index()
     {
-        return response()->json(Projeto::all());
+        return response()->json(Projeto::with('empresa')->get());
     }
 
     /**
      * @OA\Get(
-     * path="/api/projetos/{id}",
-     * tags={"Projetos"},
-     * summary="Exibir um projeto específico",
-     * @OA\Parameter(
-     * name="id",
-     * in="path",
-     * required=true,
-     * @OA\Schema(type="integer", format="int64", description="ID do Projeto")
-     * ),
-     * @OA\Response(
-     * response=200,
-     * description="Projeto encontrado",
-     * @OA\JsonContent(ref="#/components/schemas/Projeto")
-     * ),
-     * @OA\Response(response=404, description="Projeto não encontrado")
+     *     path="/api/projetos/{id}",
+     *     tags={"Projetos"},
+     *     summary="Exibir um projeto específico",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Projeto encontrado",
+     *         @OA\JsonContent(ref="#/components/schemas/Projeto")
+     *     ),
+     *     @OA\Response(response=404, description="Projeto não encontrado")
      * )
      */
     public function show(Projeto $projeto)
     {
-        return response()->json($projeto);
+        return response()->json($projeto->load('empresa'));
     }
 
     /**
      * @OA\Post(
-     * path="/api/projetos",
-     * tags={"Projetos"},
-     * summary="Criar um novo projeto",
-     * security={{"sanctum": {}}},
-     * @OA\RequestBody(
-     * required=true,
-     * description="Dados para criar um novo projeto, incluindo o arquivo binário",
-     * @OA\MediaType(
-     * mediaType="multipart/form-data",
-     * @OA\Schema(
-     * required={"arquivo", "nome_arquivo", "descricao", "id_empresa"},
-     * @OA\Property(
-     * property="arquivo",
-     * type="string",
-     * format="binary",
-     * description="O arquivo binário do projeto (ex: PDF, imagem). Use form-data."
-     * ),
-     * @OA\Property(property="nome_arquivo", type="string", description="Nome original do arquivo enviado"),
-     * @OA\Property(property="descricao", type="string", description="Descrição detalhada do projeto"),
-     * @OA\Property(property="versao", type="string", description="Versão do projeto (opcional)"),
-     * @OA\Property(property="ativo", type="boolean", description="Status de ativação do projeto (opcional, padrão true)"),
-     * @OA\Property(property="id_empresa", type="integer", description="ID da empresa à qual o projeto pertence")
-     * )
-     * )
-     * ),
-     * @OA\Response(
-     * response=201,
-     * description="Projeto criado com sucesso",
-     * @OA\JsonContent(ref="#/components/schemas/Projeto")
-     * ),
-     * @OA\Response(response=401, description="Não autenticado"),
-     * @OA\Response(response=422, description="Erro de validação")
+     *     path="/api/projetos",
+     *     tags={"Projetos"},
+     *     summary="Criar um novo projeto",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"nome_projeto", "descricao"},
+     *                 @OA\Property(property="nome_projeto", type="string", description="Nome do projeto"),
+     *                 @OA\Property(property="descricao", type="string", description="Descrição detalhada do projeto"),
+     *                 @OA\Property(property="data_inicio", type="string", format="date", description="Data de início do projeto"),
+     *                 @OA\Property(property="data_fim", type="string", format="date", description="Data de término do projeto"),
+     *                 @OA\Property(property="status", type="string", description="Status do projeto"),
+     *                 @OA\Property(property="url_projeto", type="string", format="url", description="URL do projeto"),
+     *                 @OA\Property(
+     *                     property="imagem_destaque",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Imagem de destaque (opcional)"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Projeto criado com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/Projeto")
+     *     ),
+     *     @OA\Response(response=401, description="Não autenticado"),
+     *     @OA\Response(response=422, description="Erro de validação")
      * )
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'arquivo' => 'required|file|max:10240',
-            'nome_arquivo' => 'required|string|max:255',
-            'descricao' => 'required|string|max:1000',
-            'versao' => 'nullable|string|max:20',
-            'ativo' => 'boolean',
-            'id_empresa' => 'required|integer|exists:empresas,id_empresa',
+            'nome_projeto' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'data_inicio' => 'nullable|date',
+            'data_fim' => 'nullable|date',
+            'status' => 'nullable|string|max:50',
+            'url_projeto' => 'nullable|url',
+            'imagem_destaque' => 'nullable|image|max:10240'
         ]);
 
         $idEmpresaAutenticada = Auth::check() ? Auth::user()->id_empresa : null;
 
-        if ($idEmpresaAutenticada !== null && $validated['id_empresa'] !== $idEmpresaAutenticada) {
-            return response()->json(['message' => 'Você não tem permissão para criar um projeto para esta empresa.'], 403);
+        if (!$idEmpresaAutenticada) {
+            return response()->json(['message' => 'Usuário não autenticado ou empresa não vinculada.'], 401);
         }
 
-        $caminhoArquivo = null;
-        if ($request->hasFile('arquivo')) {
-            $caminhoArquivo = $request->file('arquivo')->store('projetos');
+        $validated['id_empresa'] = $idEmpresaAutenticada;
+
+        if ($request->hasFile('imagem_destaque')) {
+            $validated['imagem_destaque_url'] = $request->file('imagem_destaque')->store('projetos/imagens');
         }
 
-        $projeto = Projeto::create([
-            'arquivo' => $caminhoArquivo,
-            'nome_arquivo' => $validated['nome_arquivo'],
-            'descricao' => $validated['descricao'],
-            'data_criacao' => Carbon::now()->toDateString(),
-            'versao' => $validated['versao'] ?? '1.0',
-            'ativo' => $validated['ativo'] ?? true,
-            'id_empresa' => $validated['id_empresa'],
-        ]);
+        $projeto = Projeto::create($validated);
 
         return response()->json($projeto, 201);
     }
 
     /**
      * @OA\Put(
-     * path="/api/projetos/{id}",
-     * tags={"Projetos"},
-     * summary="Atualizar um projeto existente",
-     * security={{"sanctum": {}}},
-     * @OA\Parameter(
-     * name="id",
-     * in="path",
-     * required=true,
-     * @OA\Schema(type="integer", format="int64", description="ID do Projeto")
-     * ),
-     * @OA\RequestBody(
-     * description="Dados para atualizar um projeto (todos os campos são opcionais)",
-     * @OA\MediaType(
-     * mediaType="multipart/form-data",
-     * @OA\Schema(
-     * @OA\Property(
-     * property="arquivo",
-     * type="string",
-     * format="binary",
-     * description="Um novo arquivo binário do projeto (opcional, para substituição)."
-     * ),
-     * @OA\Property(property="nome_arquivo", type="string", description="Nome atualizado do arquivo"),
-     * @OA\Property(property="descricao", type="string", description="Descrição atualizada do projeto."),
-     * @OA\Property(property="versao", type="string", description="Nova versão do projeto"),
-     * @OA\Property(property="ativo", type="boolean", description="Novo status de ativação")
-     * )
-     * )
-     * ),
-     * @OA\Response(
-     * response=200,
-     * description="Projeto atualizado",
-     * @OA\JsonContent(ref="#/components/schemas/Projeto")
-     * ),
-     * @OA\Response(response=401, description="Não autenticado"),
-     * @OA\Response(response=403, description="Não autorizado a atualizar este projeto"),
-     * @OA\Response(response=404, description="Projeto não encontrado"),
-     * @OA\Response(response=422, description="Erro de validação")
+     *     path="/api/projetos/{id}",
+     *     tags={"Projetos"},
+     *     summary="Atualizar um projeto",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="nome_projeto", type="string"),
+     *                 @OA\Property(property="descricao", type="string"),
+     *                 @OA\Property(property="data_inicio", type="string", format="date"),
+     *                 @OA\Property(property="data_fim", type="string", format="date"),
+     *                 @OA\Property(property="status", type="string"),
+     *                 @OA\Property(property="url_projeto", type="string"),
+     *                 @OA\Property(property="imagem_destaque", type="string", format="binary")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Projeto atualizado com sucesso", @OA\JsonContent(ref="#/components/schemas/Projeto")),
+     *     @OA\Response(response=403, description="Não autorizado"),
+     *     @OA\Response(response=404, description="Projeto não encontrado")
      * )
      */
     public function update(Request $request, Projeto $projeto)
@@ -185,18 +160,20 @@ class ProjetoController extends Controller
         }
 
         $validated = $request->validate([
-            'arquivo' => 'sometimes|file|max:10240',
-            'nome_arquivo' => 'sometimes|string|max:255',
-            'descricao' => 'sometimes|string|max:1000',
-            'versao' => 'sometimes|nullable|string|max:20',
-            'ativo' => 'sometimes|boolean',
+            'nome_projeto' => 'sometimes|string|max:255',
+            'descricao' => 'sometimes|string',
+            'data_inicio' => 'sometimes|date',
+            'data_fim' => 'sometimes|date',
+            'status' => 'sometimes|string|max:50',
+            'url_projeto' => 'sometimes|url',
+            'imagem_destaque' => 'sometimes|image|max:10240',
         ]);
 
-        if ($request->hasFile('arquivo')) {
-            if ($projeto->arquivo) {
-                Storage::delete($projeto->arquivo);
+        if ($request->hasFile('imagem_destaque')) {
+            if ($projeto->imagem_destaque_url) {
+                Storage::delete($projeto->imagem_destaque_url);
             }
-            $validated['arquivo'] = $request->file('arquivo')->store('projetos');
+            $validated['imagem_destaque_url'] = $request->file('imagem_destaque')->store('projetos/imagens');
         }
 
         $projeto->update($validated);
@@ -206,20 +183,19 @@ class ProjetoController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/projetos/{id}",
-     * tags={"Projetos"},
-     * summary="Remover um projeto",
-     * security={{"sanctum": {}}},
-     * @OA\Parameter(
-     * name="id",
-     * in="path",
-     * required=true,
-     * @OA\Schema(type="integer", format="int64", description="ID do Projeto")
-     * ),
-     * @OA\Response(response=204, description="Projeto removido com sucesso"),
-     * @OA\Response(response=401, description="Não autenticado"),
-     * @OA\Response(response=403, description="Não autorizado a remover este projeto"),
-     * @OA\Response(response=404, description="Projeto não encontrado")
+     *     path="/api/projetos/{id}",
+     *     tags={"Projetos"},
+     *     summary="Deletar um projeto",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=204, description="Projeto removido com sucesso"),
+     *     @OA\Response(response=403, description="Não autorizado"),
+     *     @OA\Response(response=404, description="Projeto não encontrado")
      * )
      */
     public function destroy(Projeto $projeto)
@@ -228,11 +204,12 @@ class ProjetoController extends Controller
             return response()->json(['message' => 'Você não tem permissão para remover este projeto.'], 403);
         }
 
-        if ($projeto->arquivo) {
-            Storage::delete($projeto->arquivo);
+        if ($projeto->imagem_destaque_url) {
+            Storage::delete($projeto->imagem_destaque_url);
         }
 
         $projeto->delete();
+
         return response()->noContent();
     }
 }

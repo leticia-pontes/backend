@@ -23,12 +23,12 @@ class AvaliacaoTest extends TestCase
         $empresa3 = Empresa::factory()->create();
 
         Avaliacao::factory()->count(3)->create([
-            'id_empresa_avaliador' => $empresa1->id_empresa,
-            'id_empresa_avaliado' => $empresa2->id_empresa,
+            'id_empresa_avaliadora' => $empresa1->id_empresa,
+            'id_empresa_avaliada' => $empresa2->id_empresa,
         ]);
         Avaliacao::factory()->count(2)->create([
-            'id_empresa_avaliador' => $empresa3->id_empresa,
-            'id_empresa_avaliado' => $empresa1->id_empresa,
+            'id_empresa_avaliadora' => $empresa3->id_empresa,
+            'id_empresa_avaliada' => $empresa1->id_empresa,
         ]);
 
         // Autentica uma empresa para acessar a rota (se necessário)
@@ -45,8 +45,8 @@ class AvaliacaoTest extends TestCase
                              'nota',
                              'comentario',
                              'data_avaliacao',
-                             'id_empresa_avaliador',
-                             'id_empresa_avaliado',
+                             'id_empresa_avaliadora',
+                             'id_empresa_avaliada',
                          ]
                      ]
                  ]);
@@ -59,8 +59,8 @@ class AvaliacaoTest extends TestCase
         $empresaAvaliador = Empresa::factory()->create();
         $empresaAvaliada = Empresa::factory()->create();
         $avaliacao = Avaliacao::factory()->create([
-            'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'comentario' => 'Teste de exibição de avaliação',
         ]);
 
@@ -74,8 +74,8 @@ class AvaliacaoTest extends TestCase
                      'id_avaliacao' => $avaliacao->id_avaliacao,
                      'nota' => $avaliacao->nota,
                      'comentario' => 'Teste de exibição de avaliação',
-                     'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-                     'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+                     'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+                     'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
                  ]);
     }
 
@@ -107,7 +107,7 @@ class AvaliacaoTest extends TestCase
 
         // 4. Dados para a nova avaliação
         $data = [
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'nota' => 4,
             'comentario' => 'Ótima parceria, recomendo!',
         ];
@@ -120,16 +120,16 @@ class AvaliacaoTest extends TestCase
                  ->assertJsonFragment(['comentario' => 'Ótima parceria, recomendo!'])
                  ->assertJson(fn (AssertableJson $json) =>
                      $json->has('id_avaliacao') // Verifica se o ID foi retornado
-                          ->where('id_empresa_avaliador', $empresaAvaliador->id_empresa)
-                          ->where('id_empresa_avaliado', $empresaAvaliada->id_empresa)
+                          ->where('id_empresa_avaliadora', $empresaAvaliador->id_empresa)
+                          ->where('id_empresa_avaliada', $empresaAvaliada->id_empresa)
                           ->where('nota', 4)
                           ->etc() // Permite outros campos no JSON de resposta
                  );
 
         // 7. Verifique se a avaliação foi realmente criada no banco de dados
         $this->assertDatabaseHas('avaliacoes', [
-            'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'nota' => 4,
             'comentario' => 'Ótima parceria, recomendo!',
         ]);
@@ -141,7 +141,7 @@ class AvaliacaoTest extends TestCase
         // Tenta criar uma avaliação sem autenticação
         $empresaAvaliada = Empresa::factory()->create();
         $data = [
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'nota' => 5,
             'comentario' => 'Teste não autenticado',
         ];
@@ -158,9 +158,9 @@ class AvaliacaoTest extends TestCase
         $empresaAvaliador = Empresa::factory()->create();
         $this->actingAs($empresaAvaliador, 'sanctum');
 
-        // Dados inválidos (nota fora do range, id_empresa_avaliado inexistente)
+        // Dados inválidos (nota fora do range, id_empresa_avaliada inexistente)
         $data = [
-            'id_empresa_avaliado' => 99999, // ID de empresa que não existe
+            'id_empresa_avaliada' => 99999, // ID de empresa que não existe
             'nota' => 0, // Nota inválida
             'comentario' => str_repeat('a', 600), // Comentário muito longo
         ];
@@ -168,7 +168,7 @@ class AvaliacaoTest extends TestCase
         $response = $this->postJson('/api/avaliacoes', $data);
 
         $response->assertStatus(422) // 422 Unprocessable Entity (erro de validação)
-                 ->assertJsonValidationErrors(['id_empresa_avaliado', 'nota', 'comentario']);
+                 ->assertJsonValidationErrors(['id_empresa_avaliada', 'nota', 'comentario']);
     }
 
     /** @test */
@@ -179,7 +179,7 @@ class AvaliacaoTest extends TestCase
 
         // Tenta avaliar a si mesma
         $data = [
-            'id_empresa_avaliado' => $empresa->id_empresa, // A empresa avalia a si mesma
+            'id_empresa_avaliada' => $empresa->id_empresa, // A empresa avalia a si mesma
             'nota' => 3,
             'comentario' => 'Tentativa de auto-avaliação',
         ];
@@ -199,8 +199,8 @@ class AvaliacaoTest extends TestCase
 
         // Crie a primeira avaliação
         Avaliacao::create([
-            'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'nota' => 5,
             'comentario' => 'Primeira avaliação',
             'data_avaliacao' => Carbon::now()->toDateString(),
@@ -208,7 +208,7 @@ class AvaliacaoTest extends TestCase
 
         // Tente criar uma avaliação duplicada
         $data = [
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'nota' => 3,
             'comentario' => 'Segunda avaliação',
         ];
@@ -227,8 +227,8 @@ class AvaliacaoTest extends TestCase
         $this->actingAs($empresaAvaliador, 'sanctum');
 
         $avaliacao = Avaliacao::create([
-            'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'nota' => 3,
             'comentario' => 'Comentário inicial',
             'data_avaliacao' => Carbon::now()->toDateString(),
@@ -258,8 +258,8 @@ class AvaliacaoTest extends TestCase
         $empresaAvaliador = Empresa::factory()->create();
         $empresaAvaliada = Empresa::factory()->create();
         $avaliacao = Avaliacao::factory()->create([
-            'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
         ]);
 
         $updatedData = [
@@ -279,8 +279,8 @@ class AvaliacaoTest extends TestCase
         $empresaOriginalAvaliador = Empresa::factory()->create();
         $empresaAvaliada = Empresa::factory()->create();
         $avaliacao = Avaliacao::factory()->create([
-            'id_empresa_avaliador' => $empresaOriginalAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaOriginalAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
         ]);
 
         // Outra empresa tenta atualizar (não autorizada)
@@ -322,8 +322,8 @@ class AvaliacaoTest extends TestCase
         $this->actingAs($empresaAvaliador, 'sanctum');
 
         $avaliacao = Avaliacao::create([
-            'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
             'nota' => 3,
             'comentario' => 'Comentário para deletar',
             'data_avaliacao' => Carbon::now()->toDateString(),
@@ -345,8 +345,8 @@ class AvaliacaoTest extends TestCase
         $empresaAvaliador = Empresa::factory()->create();
         $empresaAvaliada = Empresa::factory()->create();
         $avaliacao = Avaliacao::factory()->create([
-            'id_empresa_avaliador' => $empresaAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
         ]);
 
         $response = $this->deleteJson("/api/avaliacoes/{$avaliacao->id_avaliacao}");
@@ -361,8 +361,8 @@ class AvaliacaoTest extends TestCase
         $empresaOriginalAvaliador = Empresa::factory()->create();
         $empresaAvaliada = Empresa::factory()->create();
         $avaliacao = Avaliacao::factory()->create([
-            'id_empresa_avaliador' => $empresaOriginalAvaliador->id_empresa,
-            'id_empresa_avaliado' => $empresaAvaliada->id_empresa,
+            'id_empresa_avaliadora' => $empresaOriginalAvaliador->id_empresa,
+            'id_empresa_avaliada' => $empresaAvaliada->id_empresa,
         ]);
 
         $outraEmpresa = Empresa::factory()->create();

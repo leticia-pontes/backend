@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pagamentos', function (Blueprint $table) {
-            $table->increments('id_pagamento'); // Primary Key AUTO_INCREMENT
-            $table->unsignedInteger('id_empresa_pagadora'); // A empresa que realizou o pagamento
+            $table->id('id_pagamento'); // Primary Key AUTO_INCREMENT
+            $table->unsignedBigInteger('id_empresa_pagadora'); // A empresa que realizou o pagamento
             $table->decimal('valor', 10, 2)->notNullable();
             $table->dateTime('data_pagamento')->useCurrent(); // Data e hora do pagamento efetivo
             $table->string('metodo_pagamento', 50)->notNullable(); // Ex: 'Cartão de Crédito', 'Boleto', 'Pix'
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('referencia_transacao', 100)->nullable()->unique(); // ID de transação do gateway de pagamento, fatura, etc.
 
             // Chaves estrangeiras opcionais para ligar o pagamento a uma transação específica
-            $table->unsignedInteger('id_pedido')->nullable(); // Pagamento referente a um pedido
-            $table->unsignedInteger('id_empresa_plano')->nullable(); // Pagamento referente a uma assinatura de plano
+            $table->unsignedBigInteger('id_pedido')->nullable(); // Pagamento referente a um pedido
+            $table->unsignedBigInteger('id_empresa_plano')->nullable(); // Pagamento referente a uma assinatura de plano
 
             // Foreign Keys
             $table->foreign('id_empresa_pagadora')->references('id_empresa')->on('empresas')->onDelete('cascade');

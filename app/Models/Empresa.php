@@ -63,18 +63,6 @@ class Empresa extends Authenticatable
         return $this->hasOne(Perfil::class, 'id_empresa', 'id_empresa');
     }
 
-    // Relacionamento com Empresa_Nicho (M:N)
-    public function nichos()
-    {
-        return $this->belongsToMany(Nicho::class, 'empresa_nicho', 'id_empresa', 'id_nicho');
-    }
-
-    // Relacionamento com Empresa_Tecnologia (M:N)
-    public function tecnologias()
-    {
-        return $this->belongsToMany(Tecnologia::class, 'empresa_tecnologia', 'id_empresa', 'id_tecnologia');
-    }
-
     // Relacionamento para saber quem a empresa segue (M:N através da tabela Seguidor)
     public function seguindo()
     {
@@ -102,19 +90,19 @@ class Empresa extends Authenticatable
     // Relacionamento com Pedido (Empresa como solicitante)
     public function pedidosSolicitados()
     {
-        return $this->hasMany(Pedido::class, 'id_empresa_solicitante', 'id_empresa');
+        return $this->hasMany(Pedido::class, 'id_empresa_contratante', 'id_empresa');
     }
 
     // Relacionamento com Pedido (Empresa como prestadora)
     public function pedidosPrestados()
     {
-        return $this->hasMany(Pedido::class, 'id_empresa_prestadora', 'id_empresa');
+        return $this->hasMany(Pedido::class, 'id_empresa_desenvolvedora', 'id_empresa');
     }
 
     // Relacionamento com Avaliacao (Empresa que avaliou)
     public function avaliacoesFeitas()
     {
-        return $this->hasMany(Avaliacao::class, 'id_empresa_avaliador', 'id_empresa');
+        return $this->hasMany(Avaliacao::class, 'id_empresa_avaliadora', 'id_empresa');
     }
 
     // Relacionamento com Avaliacao (Empresa que foi avaliada)

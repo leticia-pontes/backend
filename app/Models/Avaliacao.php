@@ -17,8 +17,8 @@ class Avaliacao extends Model
         'nota',
         'comentario',
         'data_avaliacao',
-        'id_empresa_avaliador',
-        'id_empresa_avaliado',
+        'id_empresa_avaliadora',
+        'id_empresa_avaliada',
     ];
 
     protected $casts = [
@@ -29,12 +29,12 @@ class Avaliacao extends Model
     // Relacionamento com a Empresa Avaliadora
     public function avaliador()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa_avaliador', 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id_empresa_avaliadora', 'id_empresa');
     }
 
     // Relacionamento com a Empresa Avaliada
     public function avaliado()
     {
-        return $this->belongsTo(Empresa::class, 'id_empresa_avaliado', 'id_empresa');
+        return $this->belongsTo(Empresa::class, 'id_empresa_avaliada', 'id_empresa');
     }
 }

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('nichos', function (Blueprint $table) {
-            $table->increments('id_nicho'); // Primary Key AUTO_INCREMENT
+            $table->id('id_nicho'); // Primary Key AUTO_INCREMENT
             $table->string('nome_nicho', 50)->unique()->notNullable(); // Nome único para o nicho
             // Não usaremos timestamps() aqui
         });

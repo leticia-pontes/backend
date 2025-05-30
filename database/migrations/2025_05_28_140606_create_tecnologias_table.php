@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tecnologias', function (Blueprint $table) {
-            $table->increments('id_tecnologia'); // Primary Key AUTO_INCREMENT
+            $table->id('id_tecnologia'); // Primary Key AUTO_INCREMENT
             $table->string('nome_tecnologia', 50)->unique()->notNullable(); // Nome único para a tecnologia
             // Não usaremos timestamps() aqui
         });

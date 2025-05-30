@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pedidos', function (Blueprint $table) {
-            $table->increments('id_pedido'); // Primary Key AUTO_INCREMENT
-            $table->unsignedInteger('id_empresa_contratante'); // Empresa que faz o pedido
-            $table->unsignedInteger('id_empresa_desenvolvedora')->nullable(); // Empresa que recebe/executa o pedido (pode ser nulo inicialmente)
+            $table->id('id_pedido'); // Primary Key AUTO_INCREMENT
+            $table->unsignedBigInteger('id_empresa_contratante'); // Empresa que faz o pedido
+            $table->unsignedBigInteger('id_empresa_desenvolvedora')->nullable(); // Empresa que recebe/executa o pedido (pode ser nulo inicialmente)
             $table->string('titulo', 255)->notNullable(); // Título breve do pedido
             $table->text('descricao')->notNullable(); // Descrição detalhada do que está sendo pedido
             $table->decimal('valor_estimado', 10, 2)->nullable(); // Valor estimado do pedido (opcional)

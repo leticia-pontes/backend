@@ -47,7 +47,10 @@
                                         "empresa": {
                                             "type": "object"
                                         },
-                                        "token": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "token_type": {
                                             "type": "string"
                                         }
                                     },
@@ -55,6 +58,9 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas"
                     }
                 }
             }
@@ -123,26 +129,6 @@
                                     "foto": {
                                         "type": "string",
                                         "example": "http://example.com/foto.jpg",
-                                        "nullable": true
-                                    },
-                                    "biografia": {
-                                        "type": "string",
-                                        "example": "Uma empresa inovadora...",
-                                        "nullable": true
-                                    },
-                                    "nicho_mercado_nome": {
-                                        "type": "string",
-                                        "example": "Tecnologia",
-                                        "nullable": true
-                                    },
-                                    "tecnologia_nome": {
-                                        "type": "string",
-                                        "example": "Laravel",
-                                        "nullable": true
-                                    },
-                                    "redes_sociais": {
-                                        "description": "String JSON contendo links de redes sociais, ex: {'instagram':'@exemplo', 'linkedin':'/empresa'}",
-                                        "type": "string",
                                         "nullable": true
                                     }
                                 },
@@ -242,10 +228,6 @@
                                         "email": {
                                             "type": "string"
                                         },
-                                        "senha": {
-                                            "description": "Senha oculta",
-                                            "type": "string"
-                                        },
                                         "telefone": {
                                             "type": "string",
                                             "nullable": true
@@ -273,14 +255,6 @@
                                                     "type": "string",
                                                     "nullable": true
                                                 },
-                                                "biografia": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
-                                                "redes_sociais": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                },
                                                 "created_at": {
                                                     "type": "string",
                                                     "format": "date-time"
@@ -302,32 +276,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        "nichos": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "tecnologias": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "seguidores": {
-                                            "type": "array",
-                                            "items": {
-                                                "description": "Empresas que esta empresa segue",
-                                                "type": "object"
-                                            }
-                                        },
-                                        "seguindo": {
-                                            "type": "array",
-                                            "items": {
-                                                "description": "Empresas que seguem esta empresa",
-                                                "type": "object"
-                                            }
                                         }
                                     },
                                     "type": "object"
@@ -417,8 +365,14 @@
                             }
                         }
                     },
+                    "400": {
+                        "description": "Você não pode avaliar a si mesmo"
+                    },
                     "401": {
                         "description": "Não autenticado"
+                    },
+                    "409": {
+                        "description": "Avaliação já existente"
                     },
                     "422": {
                         "description": "Erro de validação",
@@ -2106,42 +2060,46 @@
                 "summary": "Criar um novo projeto",
                 "operationId": "b98fd48a5abec33d26e9af7abd8e0b02",
                 "requestBody": {
-                    "description": "Dados para criar um novo projeto, incluindo o arquivo binário",
                     "required": true,
                     "content": {
                         "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "arquivo",
-                                    "nome_arquivo",
-                                    "descricao",
-                                    "id_empresa"
+                                    "nome_projeto",
+                                    "descricao"
                                 ],
                                 "properties": {
-                                    "arquivo": {
-                                        "description": "O arquivo binário do projeto (ex: PDF, imagem). Use form-data.",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "nome_arquivo": {
-                                        "description": "Nome original do arquivo enviado",
+                                    "nome_projeto": {
+                                        "description": "Nome do projeto",
                                         "type": "string"
                                     },
                                     "descricao": {
                                         "description": "Descrição detalhada do projeto",
                                         "type": "string"
                                     },
-                                    "versao": {
-                                        "description": "Versão do projeto (opcional)",
+                                    "data_inicio": {
+                                        "description": "Data de início do projeto",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "data_fim": {
+                                        "description": "Data de término do projeto",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "status": {
+                                        "description": "Status do projeto",
                                         "type": "string"
                                     },
-                                    "ativo": {
-                                        "description": "Status de ativação do projeto (opcional, padrão true)",
-                                        "type": "boolean"
+                                    "url_projeto": {
+                                        "description": "URL do projeto",
+                                        "type": "string",
+                                        "format": "url"
                                     },
-                                    "id_empresa": {
-                                        "description": "ID da empresa à qual o projeto pertence",
-                                        "type": "integer"
+                                    "imagem_destaque": {
+                                        "description": "Imagem de destaque (opcional)",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -2187,9 +2145,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "description": "ID do Projeto",
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2213,7 +2169,7 @@
                 "tags": [
                     "Projetos"
                 ],
-                "summary": "Atualizar um projeto existente",
+                "summary": "Atualizar um projeto",
                 "operationId": "84b63cdbc13b927614038111d71740cd",
                 "parameters": [
                     {
@@ -2221,38 +2177,38 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "description": "ID do Projeto",
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "integer"
                         }
                     }
                 ],
                 "requestBody": {
-                    "description": "Dados para atualizar um projeto (todos os campos são opcionais)",
                     "content": {
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
-                                    "arquivo": {
-                                        "description": "Um novo arquivo binário do projeto (opcional, para substituição).",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "nome_arquivo": {
-                                        "description": "Nome atualizado do arquivo",
+                                    "nome_projeto": {
                                         "type": "string"
                                     },
                                     "descricao": {
-                                        "description": "Descrição atualizada do projeto.",
                                         "type": "string"
                                     },
-                                    "versao": {
-                                        "description": "Nova versão do projeto",
+                                    "data_inicio": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "data_fim": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "status": {
                                         "type": "string"
                                     },
-                                    "ativo": {
-                                        "description": "Novo status de ativação",
-                                        "type": "boolean"
+                                    "url_projeto": {
+                                        "type": "string"
+                                    },
+                                    "imagem_destaque": {
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -2262,7 +2218,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Projeto atualizado",
+                        "description": "Projeto atualizado com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2271,17 +2227,11 @@
                             }
                         }
                     },
-                    "401": {
-                        "description": "Não autenticado"
-                    },
                     "403": {
-                        "description": "Não autorizado a atualizar este projeto"
+                        "description": "Não autorizado"
                     },
                     "404": {
                         "description": "Projeto não encontrado"
-                    },
-                    "422": {
-                        "description": "Erro de validação"
                     }
                 },
                 "security": [
@@ -2294,7 +2244,7 @@
                 "tags": [
                     "Projetos"
                 ],
-                "summary": "Remover um projeto",
+                "summary": "Deletar um projeto",
                 "operationId": "70b8200445ebf2b0ed35ffd8348b66f7",
                 "parameters": [
                     {
@@ -2302,9 +2252,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "description": "ID do Projeto",
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2312,11 +2260,8 @@
                     "204": {
                         "description": "Projeto removido com sucesso"
                     },
-                    "401": {
-                        "description": "Não autenticado"
-                    },
                     "403": {
-                        "description": "Não autorizado a remover este projeto"
+                        "description": "Não autorizado"
                     },
                     "404": {
                         "description": "Projeto não encontrado"
@@ -2875,11 +2820,6 @@
                 "type": "object"
             }
         },
-        "responses": {
-            "401": {
-                "description": "Credenciais inválidas"
-            }
-        },
         "securitySchemes": {
             "sanctum": {
                 "type": "http",
@@ -2908,10 +2848,6 @@
             "description": "Gerencia as informações de pagamentos"
         },
         {
-            "name": "Projetos",
-            "description": "Gerencia os projetos das empresas"
-        },
-        {
             "name": "Autenticação",
             "description": "Autenticação"
         },
@@ -2930,6 +2866,10 @@
         {
             "name": "Perfil",
             "description": "Perfil"
+        },
+        {
+            "name": "Projetos",
+            "description": "Projetos"
         }
     ]
 }
