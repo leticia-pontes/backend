@@ -108,35 +108,41 @@ class AvaliacaoController extends Controller
      */
     public function store(Request $request)
     {
-        $idEmpresaAvaliadora = Auth::user()->id_empresa;
+        // 1. Obter o ID da empresa avaliadora (autenticada)
+        $empresaAvaliador = Auth::user(); // Pega o objeto Empresa autenticado
+        $idEmpresaAvaliador = $empresaAvaliador->id_empresa;
 
-        $validated = $request->validate([
+        // 2. Validação dos dados de entrada
+        $validatedData = $request->validate([
+            'id_empresa_avaliado' => 'required|exists:empresas,id_empresa', // Verifica se a empresa avaliada existe
             'nota' => 'required|integer|min:1|max:5',
-            'comentario' => 'required|string|max:500',
-            'id_empresa' => 'required|integer|exists:empresas,id_empresa',
+            'comentario' => 'nullable|string|max:500',
         ]);
 
-        if ($validated['id_empresa'] === $idEmpresaAvaliadora) {
-            return response()->json(['message' => 'Você não pode avaliar sua própria empresa.'], 403);
+        // 3. Verificação de auto-avaliação
+        if ($idEmpresaAvaliador === $validatedData['id_empresa_avaliado']) {
+            return response()->json(['message' => 'Você não pode avaliar a si mesmo.'], 400);
         }
 
-        $existingAvaliacao = Avaliacao::where('id_empresa', $validated['id_empresa'])
-                                      ->where('id_empresa_avaliadora', $idEmpresaAvaliadora)
-                                      ->first();
+        // 4. Verificação de avaliação duplicada (opcional, dependendo da sua regra de negócio)
+        $exists = Avaliacao::where('id_empresa_avaliador', $idEmpresaAvaliador)
+                           ->where('id_empresa_avaliado', $validatedData['id_empresa_avaliado'])
+                           ->exists();
 
-        if ($existingAvaliacao) {
-            return response()->json(['message' => 'Você já avaliou esta empresa.'], 409);
+        if ($exists) {
+            return response()->json(['message' => 'Você já avaliou esta empresa.'], 409); // 409 Conflict
         }
 
+        // 5. Criar a avaliação
         $avaliacao = Avaliacao::create([
-            'nota' => $validated['nota'],
-            'comentario' => $validated['comentario'],
-            'data_avaliacao' => Carbon::now()->toDateString(),
-            'id_empresa' => $validated['id_empresa'],
-            'id_empresa_avaliadora' => $idEmpresaAvaliadora,
+            'id_empresa_avaliador' => $idEmpresaAvaliador,
+            'id_empresa_avaliado' => $validatedData['id_empresa_avaliado'],
+            'nota' => $validatedData['nota'],
+            'comentario' => $validatedData['comentario'],
+            'data_avaliacao' => Carbon::now()->toDateString(), // Usa Carbon para garantir formato de data
         ]);
 
-        return response()->json($avaliacao, 201);
+        return response()->json($avaliacao, 201); // Retorna a avaliação criada com status 201
     }
 
     /**

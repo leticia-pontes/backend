@@ -11,13 +11,14 @@ class Avaliacao extends Model
 
     protected $table = 'avaliacoes';
     protected $primaryKey = 'id_avaliacao';
+    public $timestamps = false;
 
     protected $fillable = [
-        'id_empresa_avaliador',
-        'id_empresa_avaliado',
         'nota',
         'comentario',
         'data_avaliacao',
+        'id_empresa_avaliador',
+        'id_empresa_avaliado',
     ];
 
     protected $casts = [

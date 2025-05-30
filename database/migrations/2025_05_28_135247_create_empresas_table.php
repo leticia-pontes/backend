@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('senha', 100)->notNullable();
             $table->string('telefone', 15)->nullable(); // Telefone pode ser nulo
             $table->string('endereco', 200)->nullable(); // Endereço pode ser nulo
-            $table->dateTime('data_cadastro')->useCurrent(); // Data e hora de cadastro, padrão para o momento atual
+            $table->dateTime('data_cadastro')->useCurrent();
+            $table->rememberToken();
         });
     }
 
