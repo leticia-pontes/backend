@@ -105,7 +105,7 @@ class ProjetoController extends Controller
             'imagem_destaque' => 'nullable|image|max:10240'
         ]);
 
-        $idEmpresaAutenticada = Auth::check() ? Auth::user()->id_empresa : null;
+        $idEmpresaAutenticada = Auth::check() ? auth()->user()->id_empresa : null;
 
         if (!$idEmpresaAutenticada) {
             return response()->json(['message' => 'Usuário não autenticado ou empresa não vinculada.'], 401);
@@ -155,7 +155,7 @@ class ProjetoController extends Controller
      */
     public function update(Request $request, Projeto $projeto)
     {
-        if (Auth::check() && $projeto->id_empresa !== Auth::user()->id_empresa) {
+        if (Auth::check() && $projeto->id_empresa !== auth()->user()->id_empresa) {
             return response()->json(['message' => 'Você não tem permissão para atualizar este projeto.'], 403);
         }
 
@@ -200,7 +200,7 @@ class ProjetoController extends Controller
      */
     public function destroy(Projeto $projeto)
     {
-        if (Auth::check() && $projeto->id_empresa !== Auth::user()->id_empresa) {
+        if (Auth::check() && $projeto->id_empresa !== auth()->user()->id_empresa) {
             return response()->json(['message' => 'Você não tem permissão para remover este projeto.'], 403);
         }
 

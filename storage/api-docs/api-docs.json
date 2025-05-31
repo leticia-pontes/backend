@@ -709,7 +709,7 @@
                 "tags": [
                     "Gamificação"
                 ],
-                "summary": "Retorna o nível, pontos e progresso da empresa",
+                "summary": "Retorna o nível, pontos e progresso da empresa autenticada",
                 "operationId": "2cb6b5b2a669cc9181508c33ef3fc1b6",
                 "responses": {
                     "200": {
@@ -729,12 +729,66 @@
                                         "proximo_nivel": {
                                             "type": "integer",
                                             "example": 400
+                                        },
+                                        "progresso": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 95
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Empresa não encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/gamificacao/distintivos": {
+            "get": {
+                "tags": [
+                    "Gamificação"
+                ],
+                "summary": "Retorna os distintivos desbloqueados pela empresa autenticada",
+                "operationId": "e744702adef35852ad808d159790cf0e",
+                "responses": {
+                    "200": {
+                        "description": "Lista de distintivos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "titulo": {
+                                                "type": "string",
+                                                "example": "Avaliador Top"
+                                            },
+                                            "descricao": {
+                                                "type": "string",
+                                                "example": "5 avaliações positivas"
+                                            },
+                                            "icone": {
+                                                "type": "string",
+                                                "example": "estrela.png"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa não encontrada"
                     }
                 },
                 "security": [
@@ -749,7 +803,7 @@
                 "tags": [
                     "Gamificação"
                 ],
-                "summary": "Retorna o ranking das empresas com mais pontos",
+                "summary": "Retorna o ranking das empresas com mais pontos e maior nível",
                 "operationId": "a5ab339e7663d01aad1a6fb37c934be3",
                 "responses": {
                     "200": {
@@ -787,40 +841,50 @@
                 ]
             }
         },
-        "/api/gamificacao/distintivos": {
+        "/api/gamificacao/{id}": {
             "get": {
                 "tags": [
                     "Gamificação"
                 ],
-                "summary": "Retorna os distintivos desbloqueados pela empresa",
-                "operationId": "e744702adef35852ad808d159790cf0e",
+                "summary": "Retorna dados de gamificação de uma empresa específica",
+                "operationId": "79de478d2237c545fc763481999a3b50",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Lista de distintivos",
+                        "description": "Dados de gamificação da empresa",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "titulo": {
-                                                "type": "string",
-                                                "example": "Avaliador Top"
-                                            },
-                                            "descricao": {
-                                                "type": "string",
-                                                "example": "5 avaliações positivas"
-                                            },
-                                            "icone": {
-                                                "type": "string",
-                                                "example": "estrela.png"
-                                            }
+                                    "properties": {
+                                        "nivel": {
+                                            "type": "integer",
+                                            "example": 2
                                         },
-                                        "type": "object"
-                                    }
+                                        "pontos": {
+                                            "type": "integer",
+                                            "example": 380
+                                        },
+                                        "proximo_nivel": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Empresa não encontrada"
                     }
                 },
                 "security": [
@@ -1813,44 +1877,31 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "id_empresa"
+                                    "id_tipo_perfil"
                                 ],
                                 "properties": {
-                                    "foto": {
-                                        "description": "Arquivo de imagem para a foto do perfil.",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
                                     "biografia": {
-                                        "description": "Biografia do perfil.",
                                         "type": "string"
                                     },
-                                    "id_empempresa": {
-                                        "description": "ID da empresa associada ao perfil.",
+                                    "id_tipo_perfil": {
                                         "type": "integer"
                                     },
-                                    "id_tipo_perfil": {
-                                        "description": "ID do tipo de perfil.",
-                                        "type": "integer",
-                                        "nullable": true
-                                    },
                                     "redes_sociais": {
-                                        "description": "Array JSON de URLs de redes sociais.",
-                                        "type": "string",
-                                        "format": "json"
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
                                     },
                                     "nichos": {
-                                        "description": "Array de IDs de nichos para associar ao perfil.",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
                                         }
                                     },
                                     "tecnologias": {
-                                        "description": "Array de IDs de tecnologias para associar ao perfil.",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
@@ -1873,10 +1924,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "422": {
                         "description": "Erro de validação"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/perfis/{id}": {
@@ -1892,7 +1951,6 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "description": "ID do perfil",
                             "type": "integer"
                         }
                     }
@@ -1923,7 +1981,6 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID do perfil",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1933,51 +1990,39 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
                                     "foto": {
-                                        "description": "Novo arquivo de imagem para a foto do perfil.",
-                                        "type": "string",
-                                        "format": "binary",
-                                        "nullable": true
+                                        "description": "URL ou base64 da imagem (opcional)",
+                                        "type": "string"
                                     },
                                     "biografia": {
-                                        "description": "Nova biografia do perfil.",
-                                        "type": "string",
-                                        "nullable": true
+                                        "type": "string"
                                     },
                                     "id_empresa": {
-                                        "description": "Novo ID da empresa associada ao perfil.",
-                                        "type": "integer",
-                                        "nullable": true
+                                        "type": "integer"
                                     },
                                     "id_tipo_perfil": {
-                                        "description": "Novo ID do tipo de perfil.",
-                                        "type": "integer",
-                                        "nullable": true
+                                        "type": "integer"
                                     },
                                     "redes_sociais": {
-                                        "description": "Novo array JSON de URLs de redes sociais.",
-                                        "type": "string",
-                                        "format": "json",
-                                        "nullable": true
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
                                     },
                                     "nichos": {
-                                        "description": "Array de IDs de nichos para associar/sincronizar ao perfil.",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
-                                        },
-                                        "nullable": true
+                                        }
                                     },
                                     "tecnologias": {
-                                        "description": "Array de IDs de tecnologias para associar/sincronizar ao perfil.",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
-                                        },
-                                        "nullable": true
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1987,7 +2032,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Perfil atualizado com sucesso",
+                        "description": "Perfil atualizado",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1996,13 +2041,21 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "404": {
                         "description": "Perfil não encontrado"
                     },
                     "422": {
                         "description": "Erro de validação"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -2024,10 +2077,18 @@
                     "204": {
                         "description": "Perfil removido com sucesso"
                     },
+                    "401": {
+                        "description": "Não autenticado"
+                    },
                     "404": {
                         "description": "Perfil não encontrado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/projetos": {

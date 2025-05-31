@@ -116,7 +116,7 @@ class AvaliacaoController extends Controller
      */
     public function store(Request $request)
     {
-        $empresaAvaliador = Auth::user();
+        $empresaAvaliador = auth()->user();
         $idEmpresaAvaliador = $empresaAvaliador->id_empresa;
 
         $validatedData = $request->validate([

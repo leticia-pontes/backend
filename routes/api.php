@@ -13,50 +13,44 @@ use App\Http\Controllers\Api\PagamentoController;
 use App\Http\Controllers\Api\ProjetoController;
 use Illuminate\Support\Facades\Route;
 
-// ---
-// Rotas que não exigem autenticação ou que já estão agrupadas por outras regras
-// ---
+// Rotas de perfis (públicas apenas leitura)
+Route::get('perfis', [PerfilController::class, 'index']);
+Route::get('perfis/{id}', [PerfilController::class, 'show']);
 
-Route::apiResources([
-    'empresas' => EmpresaController::class,
-    'perfis' => PerfilController::class,
-]);
-
-// Rotas de Avaliações (públicas)
-Route::get('avaliacoes', [AvaliacaoController::class, 'index']);
-Route::get('avaliacoes/{avaliacao}', [AvaliacaoController::class, 'show']);
-
-// Rotas de Projetos (públicas)
-Route::get('projetos', [ProjetoController::class, 'index']);
-Route::get('projetos/{projeto}', [ProjetoController::class, 'show']);
-
-// Rotas de Pagamentos (públicas - apenas index e show)
-Route::get('pagamentos', [PagamentoController::class, 'index']);
-Route::get('pagamentos/{pagamento}', [PagamentoController::class, 'show']);
+// Rotas de empresas
+Route::apiResource('empresas', EmpresaController::class);
 
 // ---
-// Rotas que exigem autenticação (Auth:Sanctum)
+// Rotas que exigem autenticação (auth:sanctum)
 // ---
 Route::middleware('auth:sanctum')->group(function () {
-    // Rotas de Avaliações que exigem autenticação
-    Route::post('avaliacoes', [AvaliacaoController::class, 'store']); // Criar nova avaliação
-    Route::put('avaliacoes/{avaliacao}', [AvaliacaoController::class, 'update']); // Atualizar avaliação
-    Route::delete('avaliacoes/{avaliacao}', [AvaliacaoController::class, 'destroy']); // Remover uma avalicação
+    // Rotas protegidas de perfis
+    Route::post('perfis', [PerfilController::class, 'store']);
+    Route::put('perfis/{id}', [PerfilController::class, 'update']);
+    Route::delete('perfis/{id}', [PerfilController::class, 'destroy']);
 
-    // Rotas de Projetos que exigem autenticação
-    Route::post('projetos', [ProjetoController::class, 'store']); // Criar novo projeto
-    Route::put('projetos/{projeto}', [ProjetoController::class, 'update']); // Atualizar projeto
-    Route::delete('projetos/{projeto}', [ProjetoController::class, 'destroy']); // Remover projeto
+    // Avaliações (criação, edição, remoção)
+    Route::post('avaliacoes', [AvaliacaoController::class, 'store']);
+    Route::put('avaliacoes/{avaliacao}', [AvaliacaoController::class, 'update']);
+    Route::delete('avaliacoes/{avaliacao}', [AvaliacaoController::class, 'destroy']);
 
-    // Pagamentos: store, update, destroy (exigem autenticação)
+    // Projetos (criação, edição, remoção)
+    Route::post('projetos', [ProjetoController::class, 'store']);
+    Route::put('projetos/{projeto}', [ProjetoController::class, 'update']);
+    Route::delete('projetos/{projeto}', [ProjetoController::class, 'destroy']);
+
+    // Pagamentos protegidos
     Route::post('pagamentos', [PagamentoController::class, 'store']);
     Route::put('pagamentos/{pagamento}', [PagamentoController::class, 'update']);
     Route::delete('pagamentos/{pagamento}', [PagamentoController::class, 'destroy']);
 
-    // Outros recursos da API que exigem autenticação
+    // Outros recursos protegidos
     Route::apiResource('planos', PlanoController::class);
     Route::apiResource('pedidos', PedidoController::class);
-    Route::apiResource('gamificacao', GamificacaoController::class);
+
+    Route::get('gamificacao/status', [GamificacaoController::class, 'status']);
+    Route::get('gamificacao/ranking', [GamificacaoController::class, 'ranking']);
+    Route::get('gamificacao/distintivos', [GamificacaoController::class, 'distintivos']);
 
     // Rotas de mudança de status de pedidos
     Route::prefix('pedidos')->controller(PedidoController::class)->group(function () {
@@ -67,16 +61,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('{pedido}/cancelar', 'cancelar');
     });
 
+    // Autenticação: usuário logado
+    Route::get('auth/me', [AuthController::class, 'me']);
+    Route::post('auth/logout', [AuthController::class, 'logout']);
 });
 
-
-// Rotas de Autenticação (login, register)
+// Rotas públicas de autenticação
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('register', [AuthController::class, 'register'])->name('register');
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('me', [AuthController::class, 'me']);
-        Route::post('logout', [AuthController::class, 'logout']);
-    });
 });
