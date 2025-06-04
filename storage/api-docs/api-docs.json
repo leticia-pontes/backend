@@ -541,7 +541,7 @@
         "/api/empresas": {
             "get": {
                 "tags": [
-                    "Empresa"
+                    "Empresas"
                 ],
                 "summary": "Lista todas as empresas",
                 "operationId": "9239adbd1cfe29bdf0372db2124d0b1f",
@@ -563,7 +563,7 @@
             },
             "post": {
                 "tags": [
-                    "Empresa"
+                    "Empresas"
                 ],
                 "summary": "Cria uma nova empresa",
                 "operationId": "bea7e1cd70745d9a85563a4cdba64902",
@@ -597,7 +597,7 @@
         "/api/empresas/{id}": {
             "get": {
                 "tags": [
-                    "Empresa"
+                    "Empresas"
                 ],
                 "summary": "Mostra uma empresa pelo ID",
                 "operationId": "7e0d938df2a2305cd42451cc84ec72ec",
@@ -631,7 +631,7 @@
             },
             "put": {
                 "tags": [
-                    "Empresa"
+                    "Empresas"
                 ],
                 "summary": "Atualiza uma empresa existente",
                 "operationId": "61d6235f805bd62afcf89b24a6bae3aa",
@@ -674,11 +674,16 @@
                     "422": {
                         "description": "Erro de validação"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
-                    "Empresa"
+                    "Empresas"
                 ],
                 "summary": "Deleta uma empresa existente",
                 "operationId": "ba97e99dc7744b02f562b861b32e29a6",
@@ -701,7 +706,12 @@
                     "404": {
                         "description": "Empresa não encontrada"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/gamificacao/status": {
@@ -1848,7 +1858,7 @@
         "/api/perfis": {
             "get": {
                 "tags": [
-                    "Perfil"
+                    "Perfis"
                 ],
                 "summary": "Lista todos os perfis",
                 "operationId": "a0d9ca73487df83b715d1e6b6921d2d5",
@@ -1870,7 +1880,7 @@
             },
             "post": {
                 "tags": [
-                    "Perfil"
+                    "Perfis"
                 ],
                 "summary": "Cria um novo perfil",
                 "operationId": "e53844e4601981d939ccb8e8fd3e9423",
@@ -1941,7 +1951,7 @@
         "/api/perfis/{id}": {
             "get": {
                 "tags": [
-                    "Perfil"
+                    "Perfis"
                 ],
                 "summary": "Exibe um perfil específico",
                 "operationId": "81791b101f7254f870b57c193180eafe",
@@ -1973,7 +1983,7 @@
             },
             "put": {
                 "tags": [
-                    "Perfil"
+                    "Perfis"
                 ],
                 "summary": "Atualiza um perfil existente",
                 "operationId": "d80b022d565639abcd7368a28f24f80a",
@@ -2059,7 +2069,7 @@
             },
             "delete": {
                 "tags": [
-                    "Perfil"
+                    "Perfis"
                 ],
                 "summary": "Remove um perfil",
                 "operationId": "ece61c4ab475880a9f277d1439adeb10",
@@ -2161,6 +2171,10 @@
                                         "description": "Imagem de destaque (opcional)",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "id_empresa_desenvolvedora": {
+                                        "description": "ID da empresa desenvolvedora",
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
@@ -2270,6 +2284,9 @@
                                     "imagem_destaque": {
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "id_empresa_desenvolvedora": {
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
@@ -2901,16 +2918,16 @@
             "description": "Gerencia as avaliações feitas pelas empresas"
         },
         {
-            "name": "Empresa",
-            "description": "Operações relacionadas a empresas"
-        },
-        {
             "name": "Pagamentos",
             "description": "Gerencia as informações de pagamentos"
         },
         {
             "name": "Autenticação",
             "description": "Autenticação"
+        },
+        {
+            "name": "Empresas",
+            "description": "Empresas"
         },
         {
             "name": "Gamificação",
@@ -2925,8 +2942,8 @@
             "description": "Pedidos - Status"
         },
         {
-            "name": "Perfil",
-            "description": "Perfil"
+            "name": "Perfis",
+            "description": "Perfis"
         },
         {
             "name": "Projetos",
