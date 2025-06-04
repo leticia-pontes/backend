@@ -565,14 +565,48 @@
                 "tags": [
                     "Empresas"
                 ],
-                "summary": "Cria uma nova empresa",
+                "summary": "Cria uma nova empresa (etapa 1) e retorna ID para personalização de perfil",
                 "operationId": "bea7e1cd70745d9a85563a4cdba64902",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EmpresaCreateRequest"
+                                "required": [
+                                    "nome",
+                                    "cnpj",
+                                    "email",
+                                    "senha"
+                                ],
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Empresa XYZ"
+                                    },
+                                    "cnpj": {
+                                        "type": "string",
+                                        "example": "12.345.678/0001-90"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "empresa@exemplo.com"
+                                    },
+                                    "senha": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "segura123"
+                                    },
+                                    "telefone": {
+                                        "type": "string",
+                                        "example": "(11) 99999-8888"
+                                    },
+                                    "endereco": {
+                                        "type": "string",
+                                        "example": "Rua Exemplo, 123"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
@@ -583,13 +617,39 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Empresa"
+                                    "properties": {
+                                        "id_empresa": {
+                                            "type": "integer",
+                                            "example": 123
+                                        },
+                                        "redirect_to": {
+                                            "type": "string",
+                                            "example": "/perfil/personalizar/123"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
                     },
                     "422": {
-                        "description": "Erro de validação"
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "O campo nome é obrigatório."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -652,7 +712,35 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EmpresaUpdateRequest"
+                                "properties": {
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Empresa Atualizada"
+                                    },
+                                    "cnpj": {
+                                        "type": "string",
+                                        "example": "12.345.678/0001-91"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "novoemail@empresa.com"
+                                    },
+                                    "senha": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "novasenha123"
+                                    },
+                                    "telefone": {
+                                        "type": "string",
+                                        "example": "(11) 98888-7777"
+                                    },
+                                    "endereco": {
+                                        "type": "string",
+                                        "example": "Rua Nova, 456"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
@@ -672,7 +760,23 @@
                         "description": "Empresa não encontrada"
                     },
                     "422": {
-                        "description": "Erro de validação"
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "O campo email é obrigatório."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -2171,10 +2275,6 @@
                                         "description": "Imagem de destaque (opcional)",
                                         "type": "string",
                                         "format": "binary"
-                                    },
-                                    "id_empresa_desenvolvedora": {
-                                        "description": "ID da empresa desenvolvedora",
-                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
@@ -2284,9 +2384,6 @@
                                     "imagem_destaque": {
                                         "type": "string",
                                         "format": "binary"
-                                    },
-                                    "id_empresa_desenvolvedora": {
-                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
@@ -2899,12 +2996,6 @@
             }
         },
         "securitySchemes": {
-            "sanctum": {
-                "type": "http",
-                "description": " * @OA\\SecurityScheme(\n * securityScheme=\"sanctum\",\n * type=\"http\",\n * scheme=\"bearer\",\n * bearerFormat=\"Sanctum\"\n * )\n ",
-                "bearerFormat": "Sanctum",
-                "scheme": "bearer"
-            },
             "bearerAuth": {
                 "type": "http",
                 "bearerFormat": "JWT",
