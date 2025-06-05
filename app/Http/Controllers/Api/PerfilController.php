@@ -13,7 +13,7 @@ class PerfilController extends Controller
      * @OA\Get(
      *     path="/api/perfis",
      *     summary="Lista todos os perfis",
-     *     tags={"Perfil"},
+     *     tags={"Perfis"},
      *     @OA\Response(
      *         response=200,
      *         description="Lista de Perfis",
@@ -31,7 +31,7 @@ class PerfilController extends Controller
      * @OA\Post(
      *     path="/api/perfis",
      *     summary="Cria um novo perfil",
-     *     tags={"Perfil"},
+     *     tags={"Perfis"},
      *     security={{"sanctum": {}}},
      *     @OA\RequestBody(
      *         required=true,
@@ -58,7 +58,7 @@ class PerfilController extends Controller
             'biografia' => 'nullable|string',
             'redes_sociais' => 'nullable|array',
             'redes_sociais.*' => 'string',
-            'id_tipo_perfil' => 'nullable|integer|exists:tipo_perfis,id_tipo_perfil',
+            'id_tipo_perfil' => 'required|integer|exists:tipo_perfis,id_tipo_perfil',
             'nichos' => 'nullable|array',
             'nichos.*' => 'integer|exists:nichos,id_nicho',
             'tecnologias' => 'nullable|array',
@@ -89,7 +89,7 @@ class PerfilController extends Controller
      * @OA\Get(
      *     path="/api/perfis/{id}",
      *     summary="Exibe um perfil específico",
-     *     tags={"Perfil"},
+     *     tags={"Perfis"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -110,7 +110,7 @@ class PerfilController extends Controller
      * @OA\Put(
      *     path="/api/perfis/{id}",
      *     summary="Atualiza um perfil existente",
-     *     tags={"Perfil"},
+     *     tags={"Perfis"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
      *         name="id",
@@ -182,7 +182,7 @@ class PerfilController extends Controller
      * @OA\Delete(
      *     path="/api/perfis/{id}",
      *     summary="Remove um perfil",
-     *     tags={"Perfil"},
+     *     tags={"Perfis"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(
      *         name="id",
