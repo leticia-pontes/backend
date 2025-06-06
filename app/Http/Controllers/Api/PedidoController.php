@@ -227,13 +227,13 @@ class PedidoController extends Controller
 
         $query = Pedido::with(['contratante', 'desenvolvedora', 'current_status']);
 
-        if ($perfil->id_tipo_perfil == 1) { // Contratante
-            $query->where('id_empresa_contratante', $idEmpresa);
-        } elseif ($perfil->id_tipo_perfil == 2) { // Desenvolvedor
-            $query->where('id_empresa_desenvolvedora', $idEmpresa);
-        } else {
-            abort(403, 'Perfil não autorizado.');
-        }
+        // if ($perfil->id_tipo_perfil == 1) { // Contratante
+        //     $query->where('id_empresa_contratante', $idEmpresa);
+        // } elseif ($perfil->id_tipo_perfil == 2) { // Desenvolvedor
+        //     $query->where('id_empresa_desenvolvedora', $idEmpresa);
+        // } else {
+        //     abort(403, 'Perfil não autorizado.');
+        // }
 
         // Filtrar onde o último status (current_status) é 'pendente'
         $query->whereHas('current_status', function($q) {
@@ -484,9 +484,9 @@ class PedidoController extends Controller
      */
     public function aceitar(Pedido $pedido)
     {
-        $currentStatus = $pedido->currentStatus ? $pedido->currentStatus->status : null;
+        $currentStatus = $pedido->current_status()->first()?->status;
 
-        if ($currentStatus !== PedidoStatusEnum::Pendente->value) {
+        if ($currentStatus != PedidoStatusEnum::Pendente->value) {
             return response()->json(['message' => 'Pedido não pode ser aceito neste status.'], 400);
         }
 
@@ -556,7 +556,7 @@ class PedidoController extends Controller
      */
     public function emAndamento(Pedido $pedido)
     {
-        $currentStatus = $pedido->currentStatus ? $pedido->currentStatus->status : null;
+        $currentStatus = $pedido->current_status()->first()?->status;
 
         if (!in_array($currentStatus, [PedidoStatusEnum::Aceito->value, PedidoStatusEnum::Aguardando->value])) {
             return response()->json(['message' => 'Pedido não pode ir para "em andamento" neste status.'], 400);
@@ -619,7 +619,7 @@ class PedidoController extends Controller
      */
     public function aguardar(Pedido $pedido)
     {
-        $currentStatus = $pedido->currentStatus ? $pedido->currentStatus->status : null;
+        $currentStatus = $pedido->current_status()->first()?->status;
 
         if ($currentStatus !== PedidoStatusEnum::EmAndamento->value) {
             return response()->json(['message' => 'Pedido não pode ser marcado como "aguardando" neste status.'], 400);
@@ -684,7 +684,7 @@ class PedidoController extends Controller
      */
     public function concluir(Request $request, Pedido $pedido)
     {
-        $currentStatus = $pedido->currentStatus ? $pedido->currentStatus->status : null;
+        $currentStatus = $pedido->current_status()->first()?->status;
 
         if (!in_array($currentStatus, [PedidoStatusEnum::EmAndamento->value, PedidoStatusEnum::Aguardando->value])) {
             return response()->json(['message' => 'Pedido não pode ser concluído neste status.'], 400);
@@ -769,7 +769,7 @@ class PedidoController extends Controller
      */
     public function cancelar(Pedido $pedido)
     {
-        $currentStatus = $pedido->currentStatus ? $pedido->currentStatus->status : null;
+        $currentStatus = $pedido->current_status()->first()?->status;
 
         if (in_array($currentStatus, [PedidoStatusEnum::Concluido->value, PedidoStatusEnum::Cancelado->value])) {
             return response()->json(['message' => 'Pedido não pode ser cancelado neste status.'], 400);
