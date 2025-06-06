@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('id_perfil'); // Primary Key AUTO_INCREMENT
             $table->binary('foto')->nullable(); // BLOB para a foto do perfil (considerar armazenamento em sistema de arquivos para produção)
             $table->text('biografia')->nullable();
-            $table->string('redes_sociais', 255)->nullable(); // URLs ou handles das redes sociais
+            $table->json('redes_sociais')->nullable(); // URLs ou handles das redes sociais
             $table->integer('seguidores_cache')->default(0); // Cache da contagem de seguidores (otimização de leitura)
 
             $table->unsignedBigInteger('id_empresa')->unique();

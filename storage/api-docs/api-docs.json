@@ -2265,40 +2265,48 @@
                 "tags": [
                     "Perfis"
                 ],
-                "summary": "Cria um novo perfil",
+                "summary": "Cria ou atualiza perfil (todos os campos são opcionais)",
                 "operationId": "e53844e4601981d939ccb8e8fd3e9423",
                 "requestBody": {
-                    "required": true,
+                    "required": false,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "id_tipo_perfil"
-                                ],
                                 "properties": {
                                     "biografia": {
-                                        "type": "string"
+                                        "description": "Texto livre para a biografia",
+                                        "type": "string",
+                                        "nullable": true
                                     },
                                     "id_tipo_perfil": {
-                                        "type": "integer"
+                                        "description": "ID do tipo de perfil (opcional)",
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
                                     },
                                     "redes_sociais": {
+                                        "description": "Lista de URLs ou nomes de usuário de redes sociais",
                                         "type": "array",
                                         "items": {
                                             "type": "string"
-                                        }
+                                        },
+                                        "nullable": true
                                     },
                                     "nichos": {
+                                        "description": "Array de IDs de nichos selecionados",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
-                                        }
+                                        },
+                                        "nullable": true
                                     },
                                     "tecnologias": {
+                                        "description": "Array de IDs de tecnologias (opcional)",
                                         "type": "array",
                                         "items": {
                                             "type": "integer"
-                                        }
+                                        },
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -2309,6 +2317,16 @@
                 "responses": {
                     "201": {
                         "description": "Perfil criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Perfil"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Perfil atualizado com sucesso",
                         "content": {
                             "application/json": {
                                 "schema": {
