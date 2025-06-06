@@ -25,6 +25,8 @@ Route::get('empresas', [EmpresaController::class, 'index']);
 Route::post('empresas', [EmpresaController::class, 'store']);
 Route::get('empresas/{empresa}', [EmpresaController::class, 'show']);
 
+Route::get('/pedidos-recentes', [PedidoController::class, 'recentesConcluidos']);
+
 // Rotas de autenticação pública
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');

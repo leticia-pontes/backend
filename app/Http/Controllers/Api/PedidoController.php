@@ -25,6 +25,82 @@ class PedidoController extends Controller
 
     /**
      * @OA\Get(
+     *     path="/api/pedidos-recentes",
+     *     tags={"Pedidos"},
+     *     summary="Retorna os 5 pedidos concluídos mais recentes",
+     *     description="Retorna até cinco pedidos cujo último status seja 'Concluído', ordenados por data de criação (data_pedido) em ordem decrescente.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de pedidos concluídos mais recentes",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id_pedido",        type="integer", description="Identificador do pedido"),
+     *                 @OA\Property(property="titulo",           type="string",  description="Título do pedido"),
+     *                 @OA\Property(property="descricao",        type="string",  description="Descrição detalhada do pedido"),
+     *                 @OA\Property(property="valor_estimado",   type="number",  format="float", description="Valor estimado"),
+     *                 @OA\Property(property="data_prazo",       type="string",  format="date",  description="Data de prazo"),
+     *                 @OA\Property(property="data_pedido",      type="string",  format="date",  description="Data do pedido"),
+     *                 @OA\Property(property="current_status",   type="string",  description="Status mais recente ('Concluído')"),
+     *                 @OA\Property(
+     *                     property="contratante",
+     *                     type="object",
+     *                     @OA\Property(property="id_empresa", type="integer", description="ID da empresa contratante"),
+     *                     @OA\Property(property="nome",       type="string",  description="Nome da empresa contratante")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="desenvolvedora",
+     *                     type="object",
+     *                     @OA\Property(property="id_empresa", type="integer", description="ID da empresa desenvolvedora"),
+     *                     @OA\Property(property="nome",       type="string",  description="Nome da empresa desenvolvedora")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Não autorizado"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro interno do servidor"
+     *     )
+     * )
+     *
+     */
+    public function recentesConcluidos()
+    {
+        // 1) Filtra apenas os pedidos que tenham algum histórico de status "Concluído".
+        // 2) Carrega também os relacionamentos de contratante, desenvolvedora e o próprio status mais recente.
+        // 3) Ordena por data do pedido (data_pedido) em ordem decrescente.
+        // 4) Limita a 5 itens.
+        $pedidos = Pedido::whereHas('statusHistorico', function($q) {
+                $q->where('status', 'Concluído');
+            })
+            ->with([
+                'contratante',
+                'desenvolvedora',
+                'statusHistorico' => function($q) {
+                    // carrega somente o status mais atual (por data_status)
+                    $q->latest('data_status')->take(1);
+                }
+            ])
+            ->orderByDesc('data_pedido')
+            ->take(4)
+            ->get();
+
+        // Adiciona um atributo "current_status" a cada pedido, baseado no status mais recente carregado.
+        $pedidos->transform(function($pedido) {
+            $pedido->current_status = optional($pedido->statusHistorico->first())->status;
+            unset($pedido->statusHistorico);
+            return $pedido;
+        });
+
+        return response()->json($pedidos);
+    }
+
+    /**
+     * @OA\Get(
      * path="/api/pedidos",
      * operationId="getPedidosList",
      * tags={"Pedidos"},
