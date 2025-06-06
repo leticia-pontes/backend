@@ -45,9 +45,9 @@ class Pedido extends Model
         return $this->hasMany(PedidoStatus::class, 'id_pedido', 'id_pedido');
     }
 
-    // Você pode adicionar um acessor para obter o status atual mais recente
-    public function getCurrentStatusAttribute()
+    public function current_status()
     {
-        return $this->statusHistorico()->latest('data_status')->first();
+        return $this->hasOne(PedidoStatus::class, 'id_pedido', 'id_pedido')
+                    ->latestOfMany('data_status');
     }
 }

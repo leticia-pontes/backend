@@ -70,7 +70,7 @@
                 "tags": [
                     "Autenticação"
                 ],
-                "summary": "Cadastro de empresa",
+                "summary": "Cadastro de empresa ou desenvolvedor",
                 "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
                 "requestBody": {
                     "required": true,
@@ -148,6 +148,9 @@
                                             "type": "string"
                                         },
                                         "empresa": {
+                                            "type": "object"
+                                        },
+                                        "perfil": {
                                             "type": "object"
                                         },
                                         "access_token": {
@@ -1697,6 +1700,85 @@
                 ]
             }
         },
+        "/api/pedidos/pendentes": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Obtém a lista de pedidos com status pendente",
+                "description": "Retorna uma lista paginada de pedidos com status pendente, filtrados pelo perfil do usuário.",
+                "operationId": "getPedidosPendentes",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número da página para paginação",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Número de itens por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operação bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Pedido"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "tipo_perfil": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/pedidos/{id}": {
             "get": {
                 "tags": [
@@ -2745,10 +2827,212 @@
                     }
                 ]
             }
+        },
+        "/api/tecnologias": {
+            "get": {
+                "tags": [
+                    "Tecnologia"
+                ],
+                "summary": "Listar todas as tecnologias",
+                "operationId": "getTecnologiasList",
+                "responses": {
+                    "200": {
+                        "description": "Lista de tecnologias",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tecnologia"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tecnologia"
+                ],
+                "summary": "Criar nova tecnologia",
+                "operationId": "createTecnologia",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome_tecnologia"
+                                ],
+                                "properties": {
+                                    "nome_tecnologia": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Laravel"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tecnologia criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tecnologia"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/api/tecnologias/{id}": {
+            "get": {
+                "tags": [
+                    "Tecnologia"
+                ],
+                "summary": "Mostrar uma tecnologia específica",
+                "operationId": "getTecnologiaById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da tecnologia",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes da tecnologia",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tecnologia"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tecnologia não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tecnologia"
+                ],
+                "summary": "Atualizar tecnologia existente",
+                "operationId": "updateTecnologia",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da tecnologia",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome_tecnologia"
+                                ],
+                                "properties": {
+                                    "nome_tecnologia": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Vue.js Atualizado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tecnologia atualizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tecnologia"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tecnologia não encontrada"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tecnologia"
+                ],
+                "summary": "Remover tecnologia",
+                "operationId": "deleteTecnologia",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID da tecnologia",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Tecnologia removida com sucesso"
+                    },
+                    "404": {
+                        "description": "Tecnologia não encontrada"
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "Tecnologia": {
+                "properties": {
+                    "id_tecnologia": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nome_tecnologia": {
+                        "type": "string",
+                        "example": "Laravel"
+                    }
+                },
+                "type": "object"
+            },
             "Avaliacao": {
                 "title": "Avaliacao",
                 "description": "Modelo de Avaliação",
@@ -3360,6 +3644,10 @@
         {
             "name": "Projetos",
             "description": "Projetos"
+        },
+        {
+            "name": "Tecnologia",
+            "description": "Tecnologia"
         }
     ]
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('empresas', function (Blueprint $table) {
             $table->id('id_empresa'); // Cria um unsignedBigInteger auto increment
             $table->string('nome', 100)->notNullable();
-            $table->string('cnpj', 14)->unique()->notNullable(); // CNPJ único
+            $table->string('cnpj', 14)->unique()->nullable(); // CNPJ único
             $table->string('email', 100)->unique()->notNullable(); // Email único
             $table->string('senha', 100)->notNullable();
             $table->string('telefone', 15)->nullable(); // Telefone pode ser nulo
