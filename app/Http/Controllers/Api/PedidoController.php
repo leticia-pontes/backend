@@ -111,22 +111,14 @@ class PedidoController extends Controller
      * in="query",
      * description="Número da página para paginação",
      * required=false,
-     * @OA\Schema(
-     * type="integer",
-     * format="int32",
-     * default=1
-     * )
+     * @OA\Schema(type="integer", format="int32", default=1)
      * ),
      * @OA\Parameter(
      * name="per_page",
      * in="query",
      * description="Número de itens por página",
      * required=false,
-     * @OA\Schema(
-     * type="integer",
-     * format="int32",
-     * default=10
-     * )
+     * @OA\Schema(type="integer", format="int32", default=10)
      * ),
      * @OA\Response(
      * response=200,
@@ -146,31 +138,120 @@ class PedidoController extends Controller
      * )
      * )
      * ),
-     * @OA\Response(
-     * response=401,
-     * description="Não autenticado"
-     * ),
+     * @OA\Response(response=401, description="Não autenticado"),
      * security={{"bearerAuth": {}}}
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pedidos = Pedido::with([
-                            'contratante',
-                            'desenvolvedora',
-                            'statusHistorico' => function($query) {
-                                $query->latest('data_status')->take(1);
-                            }
-                        ])
-                         ->paginate(10);
+        $user = auth()->user();
+        $perfil = $user->perfil;
+        $idEmpresa = $user->id_empresa;
 
-        $pedidos->getCollection()->transform(function ($pedido) {
-            $pedido->current_status = $pedido->currentStatus ? $pedido->currentStatus->status : null;
-            unset($pedido->statusHistorico);
-            return $pedido;
+        $query = Pedido::with(['contratante', 'desenvolvedora', 'current_status']);
+
+        if ($perfil->id_tipo_perfil == 1) { // Contratante
+            $query->where('id_empresa_contratante', $idEmpresa);
+        } elseif ($perfil->id_tipo_perfil == 2) { // Desenvolvedor
+            $query->where('id_empresa_desenvolvedora', $idEmpresa);
+        } else {
+            abort(403, 'Perfil não autorizado.');
+        }
+
+        $perPage = $request->input('per_page', 10);
+        $pedidos = $query->paginate($perPage);
+
+        return response()->json([
+            'data' => $pedidos->items(),
+            'pagination' => [
+                'current_page' => $pedidos->currentPage(),
+                'last_page' => $pedidos->lastPage(),
+                'total' => $pedidos->total(),
+            ],
+            'tipo_perfil' => strtolower($perfil->tipoPerfil->nome_tipo ?? ''),
+        ]);
+    }
+
+    public function current_status()
+    {
+        return $this->hasOne(PedidoStatus::class, 'id_pedido', 'id_pedido')
+                    ->latest('data_status');
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/pedidos/pendentes",
+     *   operationId="getPedidosPendentes",
+     *   tags={"Pedidos"},
+     *   summary="Obtém a lista de pedidos com status pendente",
+     *   description="Retorna uma lista paginada de pedidos com status pendente, filtrados pelo perfil do usuário.",
+     *   @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Número da página para paginação",
+     *     required=false,
+     *     @OA\Schema(type="integer", format="int32", default=1)
+     *   ),
+     *   @OA\Parameter(
+     *     name="per_page",
+     *     in="query",
+     *     description="Número de itens por página",
+     *     required=false,
+     *     @OA\Schema(type="integer", format="int32", default=10)
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Operação bem-sucedida",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="data", type="array",
+     *         @OA\Items(ref="#/components/schemas/Pedido")
+     *       ),
+     *       @OA\Property(property="pagination", type="object",
+     *         @OA\Property(property="current_page", type="integer"),
+     *         @OA\Property(property="last_page", type="integer"),
+     *         @OA\Property(property="total", type="integer")
+     *       ),
+     *       @OA\Property(property="tipo_perfil", type="string")
+     *     )
+     *   ),
+     *   @OA\Response(response=401, description="Não autenticado"),
+     *   security={{"bearerAuth": {}}}
+     * )
+     */
+    public function pedidosPendentes(Request $request)
+    {
+        $user = auth()->user();
+        $perfil = $user->perfil;
+        $idEmpresa = $user->id_empresa;
+
+        $query = Pedido::with(['contratante', 'desenvolvedora', 'current_status']);
+
+        if ($perfil->id_tipo_perfil == 1) { // Contratante
+            $query->where('id_empresa_contratante', $idEmpresa);
+        } elseif ($perfil->id_tipo_perfil == 2) { // Desenvolvedor
+            $query->where('id_empresa_desenvolvedora', $idEmpresa);
+        } else {
+            abort(403, 'Perfil não autorizado.');
+        }
+
+        // Filtrar onde o último status (current_status) é 'pendente'
+        $query->whereHas('current_status', function($q) {
+            $q->where('status', 'pendente');
         });
 
-        return response()->json($pedidos);
+        $perPage = $request->input('per_page', 10);
+        $pedidos = $query->paginate($perPage);
+
+        return response()->json([
+            'data' => $pedidos->items(),
+            'pagination' => [
+                'current_page' => $pedidos->currentPage(),
+                'last_page' => $pedidos->lastPage(),
+                'total' => $pedidos->total(),
+            ],
+            'tipo_perfil' => strtolower($perfil->tipoPerfil->nome_tipo ?? ''),
+        ]);
     }
 
     /**

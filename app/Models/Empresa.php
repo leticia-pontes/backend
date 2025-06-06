@@ -41,6 +41,7 @@ class Empresa extends Authenticatable
     // Define os campos que devem ser ocultados ao serializar o modelo para arrays/JSON (ex: senha)
     protected $hidden = [
         'senha',
+        'remember_token',
     ];
 
     // Define os atributos que devem ser convertidos para tipos nativos do PHP

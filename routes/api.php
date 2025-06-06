@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PedidoStatusController;
 use App\Http\Controllers\Api\PagamentoController;
 // use App\Http\Controllers\Api\PlanoController;
 use App\Http\Controllers\Api\NichoController;
+use App\Http\Controllers\Api\TecnologiaController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas de perfis (somente leitura)
@@ -29,6 +30,7 @@ Route::get('empresas/{empresa}', [EmpresaController::class, 'show']);
 Route::get('pedidos-recentes', [PedidoController::class, 'recentesConcluidos']);
 
 Route::apiResource('nichos', NichoController::class);
+Route::apiResource('tecnologias', TecnologiaController::class);
 
 // Rotas de autenticação pública
 Route::prefix('auth')->group(function () {
@@ -67,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('planos', PlanoController::class);
 
     // Pedidos
+    Route::get('/pedidos/pendentes', [PedidoController::class, 'pedidosPendentes']);
     Route::apiResource('pedidos', PedidoController::class);
 
     // Mudança de status dos pedidos

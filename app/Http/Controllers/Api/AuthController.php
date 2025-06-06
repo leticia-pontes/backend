@@ -60,17 +60,26 @@ class AuthController extends Controller
 
         $token = $empresa->createToken('auth_token')->plainTextToken;
 
+        // Carregar perfil e tipoPerfil
+        $empresa->load('perfil.tipoPerfil');
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
             'empresa' => $empresa->makeHidden(['senha']),
+            'perfil' => $empresa->perfil ? [
+                'id_perfil' => $empresa->perfil->id_perfil,
+                'id_tipo_perfil' => $empresa->perfil->id_tipo_perfil,
+                'tipo_perfil_nome' => $empresa->perfil->tipoPerfil->nome_tipo,
+                'foto' => $empresa->perfil->foto ?? null,
+            ] : null,
         ]);
     }
 
     /**
      * @OA\Post(
      *     path="/api/auth/register",
-     *     summary="Cadastro de empresa",
+     *     summary="Cadastro de empresa ou desenvolvedor",
      *     tags={"Autenticação"},
      *     @OA\RequestBody(
      *         required=true,
@@ -81,7 +90,7 @@ class AuthController extends Controller
      *             @OA\Property(property="email", type="string", format="email", example="empresa@exemplo.com"),
      *             @OA\Property(property="senha", type="string", format="password", example="senha123"),
      *             @OA\Property(property="senha_confirmation", type="string", format="password", example="senha123"),
-     *             @OA\Property(property="nome_tipo_perfil", type="string", enum={"Contratante", "Desenvolvedor"}, example="Contratante"),
+     *             @OA\Property(property="nome_tipo_perfil", type="string", enum={"Contratante","Desenvolvedor"}, example="Contratante"),
      *             @OA\Property(property="telefone", type="string", nullable=true, example="11987654321"),
      *             @OA\Property(property="endereco", type="string", nullable=true, example="Rua Exemplo, 123"),
      *             @OA\Property(property="foto", type="string", nullable=true, example="http://example.com/foto.jpg")
@@ -93,6 +102,7 @@ class AuthController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string"),
      *             @OA\Property(property="empresa", type="object"),
+     *             @OA\Property(property="perfil", type="object"),
      *             @OA\Property(property="access_token", type="string"),
      *             @OA\Property(property="token_type", type="string")
      *         )
@@ -109,14 +119,14 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nome' => 'required|string|max:100',
-            'cnpj' => 'required|string|max:14|unique:empresas,cnpj',
-            'email' => 'required|email|unique:empresas,email',
-            'senha' => 'required|string|min:6|confirmed',
-            'nome_tipo_perfil' => 'required|string|in:Contratante,Desenvolvedor',
-            'telefone' => 'nullable|string|max:15',
-            'endereco' => 'nullable|string|max:200',
-            'foto' => 'nullable|string',
+            'nome'                 => 'required|string|max:100',
+            'cnpj'                 => 'required_if:nome_tipo_perfil,Contratante|string|max:14|unique:empresas,cnpj',
+            'email'                => 'required|email|unique:empresas,email',
+            'senha'                => 'required|string|min:6|confirmed',
+            'nome_tipo_perfil'     => 'required|string|in:Contratante,Desenvolvedor',
+            'telefone'             => 'nullable|string|max:15',
+            'endereco'             => 'nullable|string|max:200',
+            'foto'                 => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -124,43 +134,45 @@ class AuthController extends Controller
         }
 
         return DB::transaction(function () use ($request) {
-            // Cria empresa, criptografando senha
+            // 1) Cria a Empresa (criptografa a senha)
             $empresa = Empresa::create([
-                'nome' => $request->nome,
-                'cnpj' => $request->cnpj,
-                'email' => $request->email,
-                'senha' => Hash::make($request->senha),
-                'telefone' => $request->telefone,
-                'endereco' => $request->endereco,
+                'nome'          => $request->nome,
+                'cnpj'          => $request->cnpj,             // só vem se for “Contratante”
+                'email'         => $request->email,
+                'senha'         => Hash::make($request->senha),
+                'telefone'      => $request->telefone,
+                'endereco'      => $request->endereco,
                 'data_cadastro' => Carbon::now(),
             ]);
 
+            // 2) Busca o TipoPerfil baseado no nome enviado
             $tipoPerfil = TipoPerfil::where('nome_tipo', $request->nome_tipo_perfil)->first();
-
             if (!$tipoPerfil) {
                 throw ValidationException::withMessages([
                     'nome_tipo_perfil' => ['Tipo de perfil inválido ou não encontrado.'],
                 ]);
             }
 
-            // Cria o perfil associado à empresa
+            // 3) Cria o Perfil associado à empresa
             $perfil = Perfil::create([
-                'id_empresa' => $empresa->id_empresa,
-                'id_tipo_perfil' => $tipoPerfil->id_tipo_perfil,
-                'foto' => $request->foto,
-                // sem biografia e redes_sociais conforme instrução
+                'id_empresa'      => $empresa->id_empresa,
+                'id_tipo_perfil'  => $tipoPerfil->id_tipo_perfil,
+                'foto'            => $request->foto,  // se existir
+                // Se quiser já preencher biografia e redes, adicione aqui
             ]);
 
+            // 4) Gera token de API (Sanctum) usando o model Empresa
             $token = $empresa->createToken('auth_token')->plainTextToken;
 
-            // Carrega relacionamento perfil e tipoPerfil para retorno
+            // 5) Carrega relações para retornar no JSON
             $empresa->load('perfil.tipoPerfil');
 
             return response()->json([
-                'message' => 'Cadastro realizado com sucesso',
-                'empresa' => $empresa->makeHidden(['senha']),
+                'message'      => 'Cadastro realizado com sucesso',
+                'empresa'      => $empresa->makeHidden(['senha']), // oculta senha
+                'perfil'       => $perfil->makeHidden([]),         // traz id_perfil, id_tipo_perfil, id_empresa
                 'access_token' => $token,
-                'token_type' => 'Bearer',
+                'token_type'   => 'Bearer',
             ], 201);
         });
     }

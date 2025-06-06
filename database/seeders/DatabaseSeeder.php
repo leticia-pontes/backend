@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             AvaliacaoSeeder::class,
             PerfilNichoSeeder::class,
             PerfilTecnologiaSeeder::class,
-            ConfiguracaoGamificacaoSeeder::class
+            ConfiguracaoGamificacaoSeeder::class,
+            EmpresaDistintivoSeeder::class,
         ]);
     }
 }
