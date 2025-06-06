@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PlanoController;
 use App\Http\Controllers\Api\PedidoStatusController;
 use App\Http\Controllers\Api\PagamentoController;
 // use App\Http\Controllers\Api\PlanoController;
+use App\Http\Controllers\Api\NichoController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas de perfis (somente leitura)
@@ -25,7 +26,9 @@ Route::get('empresas', [EmpresaController::class, 'index']);
 Route::post('empresas', [EmpresaController::class, 'store']);
 Route::get('empresas/{empresa}', [EmpresaController::class, 'show']);
 
-Route::get('/pedidos-recentes', [PedidoController::class, 'recentesConcluidos']);
+Route::get('pedidos-recentes', [PedidoController::class, 'recentesConcluidos']);
+
+Route::apiResource('nichos', NichoController::class);
 
 // Rotas de autenticação pública
 Route::prefix('auth')->group(function () {
