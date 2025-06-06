@@ -1008,6 +1008,195 @@
                 ]
             }
         },
+        "/api/nichos": {
+            "get": {
+                "tags": [
+                    "Nicho"
+                ],
+                "summary": "Listar todos os nichos",
+                "operationId": "getNichosList",
+                "responses": {
+                    "200": {
+                        "description": "Lista de nichos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Nicho"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Nicho"
+                ],
+                "summary": "Criar novo nicho",
+                "operationId": "createNicho",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome_nicho"
+                                ],
+                                "properties": {
+                                    "nome_nicho": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Exemplo de Nicho"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Nicho criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Nicho"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/api/nichos/{id}": {
+            "get": {
+                "tags": [
+                    "Nicho"
+                ],
+                "summary": "Mostrar um nicho específico",
+                "operationId": "getNichoById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do nicho",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhes do nicho",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Nicho"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nicho não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Nicho"
+                ],
+                "summary": "Atualizar nicho existente",
+                "operationId": "updateNicho",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do nicho",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nome_nicho"
+                                ],
+                                "properties": {
+                                    "nome_nicho": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Nicho Atualizado"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Nicho atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Nicho"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nicho não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Nicho"
+                ],
+                "summary": "Remover nicho",
+                "operationId": "deleteNicho",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do nicho",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Nicho removido com sucesso"
+                    },
+                    "404": {
+                        "description": "Nicho não encontrado"
+                    }
+                }
+            }
+        },
         "/api/pagamentos": {
             "get": {
                 "tags": [
@@ -2747,6 +2936,26 @@
                 },
                 "type": "object"
             },
+            "Nicho": {
+                "title": "Nicho",
+                "description": "Modelo de Nicho",
+                "required": [
+                    "id_nicho",
+                    "nome_nicho"
+                ],
+                "properties": {
+                    "id_nicho": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "nome_nicho": {
+                        "type": "string",
+                        "example": "Tecnologia"
+                    }
+                },
+                "type": "object"
+            },
             "Pagamento": {
                 "title": "Pagamento",
                 "description": "Detalhes de um pagamento",
@@ -3097,6 +3306,10 @@
         {
             "name": "Avaliações",
             "description": "Gerencia as avaliações feitas pelas empresas"
+        },
+        {
+            "name": "Nicho",
+            "description": "Operações relacionadas a Nichos"
         },
         {
             "name": "Pagamentos",
