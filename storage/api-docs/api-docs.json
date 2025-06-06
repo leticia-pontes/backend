@@ -1226,6 +1226,96 @@
                 ]
             }
         },
+        "/api/pedidos-recentes": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Retorna os 5 pedidos concluídos mais recentes",
+                "description": "Retorna até cinco pedidos cujo último status seja 'Concluído', ordenados por data de criação (data_pedido) em ordem decrescente.",
+                "operationId": "c10c5e0651bcfa0b6a9434d772eb944c",
+                "responses": {
+                    "200": {
+                        "description": "Lista de pedidos concluídos mais recentes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id_pedido": {
+                                                "description": "Identificador do pedido",
+                                                "type": "integer"
+                                            },
+                                            "titulo": {
+                                                "description": "Título do pedido",
+                                                "type": "string"
+                                            },
+                                            "descricao": {
+                                                "description": "Descrição detalhada do pedido",
+                                                "type": "string"
+                                            },
+                                            "valor_estimado": {
+                                                "description": "Valor estimado",
+                                                "type": "number",
+                                                "format": "float"
+                                            },
+                                            "data_prazo": {
+                                                "description": "Data de prazo",
+                                                "type": "string",
+                                                "format": "date"
+                                            },
+                                            "data_pedido": {
+                                                "description": "Data do pedido",
+                                                "type": "string",
+                                                "format": "date"
+                                            },
+                                            "current_status": {
+                                                "description": "Status mais recente ('Concluído')",
+                                                "type": "string"
+                                            },
+                                            "contratante": {
+                                                "properties": {
+                                                    "id_empresa": {
+                                                        "description": "ID da empresa contratante",
+                                                        "type": "integer"
+                                                    },
+                                                    "nome": {
+                                                        "description": "Nome da empresa contratante",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "desenvolvedora": {
+                                                "properties": {
+                                                    "id_empresa": {
+                                                        "description": "ID da empresa desenvolvedora",
+                                                        "type": "integer"
+                                                    },
+                                                    "nome": {
+                                                        "description": "Nome da empresa desenvolvedora",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor"
+                    }
+                }
+            }
+        },
         "/api/pedidos": {
             "get": {
                 "tags": [
